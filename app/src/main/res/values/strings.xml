@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Android Ecommerce App</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Cart</string>
+    <string name="title_profile">Profile</string>
+    <string name="welcome_nto_the_world_of_shopping">Welcome!\nTo the world of shopping</string>
+    <string name="description">Description</string>
+    <string name="_4_5">4.5</string>
+    <string name="shoe_description">The Adidas Predator is a high-performance soccer shoe designed for precision and control. Featuring a textured upper for enhanced grip, it offers a secure fit and superior traction on the field. Perfect for players looking to dominate with power and agility, the Predator combines style with cutting-edge technology.</string>
+</resources>

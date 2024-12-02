@@ -1,0 +1,6 @@
+<!-- res/drawable/top_border.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/transparent" /> <!-- Set the background to transparent -->
+    <size android:height="2dp" /> <!-- Height of the border -->
+    <solid android:color="@android:color/black" /> <!-- Set the color of the top border -->
+</shape>
