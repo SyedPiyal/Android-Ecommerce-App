@@ -1,31 +1,115 @@
 package com.example.androidecommerceapp.ui.profile
 
-import androidx.fragment.app.viewModels
+
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.androidecommerceapp.MainActivity
 import com.example.androidecommerceapp.R
+import com.example.androidecommerceapp.dataModel.ProfileOption
+import com.example.androidecommerceapp.databinding.FragmentMyCartBinding
+import com.example.androidecommerceapp.databinding.FragmentProfileBinding
+import com.example.androidecommerceapp.ui.adapter.ProfileOptionAdapter
+import com.example.androidecommerceapp.ui.auth.LoginActivity
+import com.example.androidecommerceapp.ui.editProfile.EditProfileActivity
+import com.example.androidecommerceapp.ui.orderHistory.OrderHistoryActivity
+import com.example.androidecommerceapp.ui.paymentMethod.PaymentMethodActivity
+
 
 class ProfileFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = ProfileFragment()
-    }
+    private var _binding: FragmentProfileBinding? = null
 
-    private val viewModel: ProfileViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // TODO: Use the ViewModel
-    }
-
+    private val binding get() = _binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+
+        // Set up profile info (hardcoded for now)
+        binding.tvProfileName.text = "John Doe"
+        binding.tvProfileEmail.text = "johndoe@example.com"
+
+        // Profile options
+        val profileOptions = listOf(
+            ProfileOption(R.drawable.ic_edit, "Edit Profile"),
+            ProfileOption(R.drawable.ic_order_history, "Order History"),
+            ProfileOption(R.drawable.ic_payment, "Payment Methods"),
+            ProfileOption(R.drawable.ic_logout, "Logout")
+        )
+
+        val profileOptionAdapter = ProfileOptionAdapter(profileOptions) { option ->
+            // Handle option click
+            when (option.title) {
+                "Edit Profile" -> {
+                    val intent = Intent(requireContext(), EditProfileActivity::class.java)
+                    startActivity(intent)
+                }
+                "Order History" -> {
+                    val intent = Intent(requireContext(), OrderHistoryActivity::class.java)
+                    startActivity(intent)
+                }
+                "Payment Methods" -> {
+                    val intent = Intent(requireContext(), PaymentMethodActivity::class.java)
+                    startActivity(intent)
+                }
+                "Logout" -> {
+                    showCustomLogoutDialog()
+                }
+            }
+        }
+
+        binding.rvProfileOptions.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = profileOptionAdapter
+        }
+        return binding.root
+    }
+    private fun showCustomLogoutDialog() {
+        // Inflate the custom layout for the dialog
+        val dialogView = layoutInflater.inflate(R.layout.dialog_custom, null)
+
+        // Get references to the buttons in the custom dialog
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnConfirm = dialogView.findViewById<Button>(R.id.btnConfirm)
+
+        // Create an AlertDialog builder
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+            .setView(dialogView)  // Set the custom layout as the dialog's view
+            .setCancelable(true)   // Allow the dialog to be canceled by tapping outside
+
+        // Create the dialog
+        val customDialog = dialogBuilder.create()
+
+        // Set button actions
+        btnCancel.setOnClickListener {
+            customDialog.dismiss()  // Dismiss the dialog when the cancel button is clicked
+        }
+
+        btnConfirm.setOnClickListener {
+            customDialog.dismiss()  // Dismiss the dialog
+            performLogout()         // Call the logout logic
+        }
+
+        // Show the dialog
+        customDialog.show()
+    }
+
+    private fun performLogout() {
+        // Implement your logout logic here (e.g., clear user session, navigate to login screen, etc.)
+        Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
+
+        // Example: Navigate to login screen (or MainActivity)
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        startActivity(intent)
+        activity?.finish()  // Close the ProfileActivity or Fragment
     }
 }

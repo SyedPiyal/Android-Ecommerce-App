@@ -1,5 +1,6 @@
 package com.example.androidecommerceapp.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import com.example.androidecommerceapp.databinding.FragmentHomeBinding
 import com.example.androidecommerceapp.ui.adapter.CategoryAdapter
 import com.example.androidecommerceapp.ui.adapter.OfferAdapter
 import com.example.androidecommerceapp.ui.adapter.ProductAdapter
+import com.example.androidecommerceapp.ui.productDetails.ProductDetailsActivity
 
 class HomeFragment : Fragment() {
 
@@ -88,6 +90,11 @@ class HomeFragment : Fragment() {
 
         productGridView.layoutManager = layoutManager
         productGridView.adapter = productAdapter
+
+        binding.tvSeeAll.setOnClickListener {
+            val intent = Intent(requireContext(), ProductDetailsActivity::class.java)
+            startActivity(intent)
+        }
 
         return root
     }
