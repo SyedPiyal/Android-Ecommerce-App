@@ -24,6 +24,7 @@ class ProductDetailsActivity : AppCompatActivity() {
     private lateinit var decrementButton: Button
 
     private lateinit var binding: ActivityProductDetailsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

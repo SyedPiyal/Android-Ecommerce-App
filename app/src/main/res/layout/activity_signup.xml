@@ -44,49 +44,50 @@
             style="@style/h2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
             android:gravity="center"
             android:text="Do you have an account? log in"
             android:textAlignment="center"
-            app:layout_constraintEnd_toEndOf="@id/tvLetsRegister"
-            app:layout_constraintStart_toStartOf="@id/tvLetsRegister"
-            app:layout_constraintTop_toBottomOf="@id/tvLetsRegister" />
+            app:layout_constraintEnd_toEndOf="@+id/buttonRegisterRegister"
+            app:layout_constraintStart_toStartOf="@+id/buttonRegisterRegister"
+            app:layout_constraintTop_toBottomOf="@+id/buttonRegisterRegister" />
 
         <EditText
             android:id="@+id/edFirstNameRegister"
+            style="@style/editText"
             android:layout_width="0dp"
             android:layout_height="35dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="78dp"
+            android:background="@drawable/edit_text_border"
             android:hint="First Name"
             android:textColorHint="@color/black"
-            android:background="@drawable/edit_text_border"
             app:layout_constraintEnd_toEndOf="@id/guidelineRegisterRight"
-            style="@style/editText"
             app:layout_constraintStart_toStartOf="@id/guidelineRegisterLeft"
-            app:layout_constraintTop_toBottomOf="@id/tvDoYouHaveAccount" />
+            app:layout_constraintTop_toBottomOf="@+id/tvLetsRegister" />
 
         <EditText
             android:id="@+id/edLastNameRegister"
+            style="@style/editText"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginTop="10dp"
+            android:background="@drawable/edit_text_border"
             android:hint="Last name"
             android:textColorHint="@color/black"
-            android:background="@drawable/edit_text_border"
             app:layout_constraintEnd_toEndOf="@id/guidelineRegisterRight"
-            style="@style/editText"
             app:layout_constraintStart_toStartOf="@id/guidelineRegisterLeft"
             app:layout_constraintTop_toBottomOf="@id/edFirstNameRegister" />
 
         <EditText
             android:id="@+id/edEmailRegister"
+            style="@style/editText"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginTop="10dp"
-            android:hint="Email"
-            android:textColorHint="@color/black"
             android:background="@drawable/edit_text_border"
+            android:hint="Email"
             android:inputType="textEmailAddress"
-            style="@style/editText"
+            android:textColorHint="@color/black"
             app:layout_constraintEnd_toEndOf="@id/guidelineRegisterRight"
             app:layout_constraintStart_toStartOf="@id/guidelineRegisterLeft"
             app:layout_constraintTop_toBottomOf="@id/edLastNameRegister" />
@@ -97,10 +98,10 @@
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginTop="10dp"
-            android:hint="Password"
-            android:textColorHint="@color/black"
             android:background="@drawable/edit_text_border"
+            android:hint="Password"
             android:inputType="textPassword"
+            android:textColorHint="@color/black"
             app:layout_constraintEnd_toEndOf="@id/guidelineRegisterRight"
             app:layout_constraintStart_toStartOf="@id/guidelineRegisterLeft"
             app:layout_constraintTop_toBottomOf="@id/edEmailRegister" />
@@ -110,51 +111,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
+            android:background="@drawable/button_shape"
             android:text="@string/register"
             android:textColor="@color/white"
-            android:background="@drawable/button_shape"
             app:layout_constraintEnd_toEndOf="@id/guidelineRegisterRight"
             app:layout_constraintStart_toStartOf="@id/guidelineRegisterLeft"
             app:layout_constraintTop_toBottomOf="@id/edPasswordRegister" />
 
-        <ImageView
-            android:id="@+id/facebookRegister"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:src="@drawable/facebook_login"
-            app:layout_constraintStart_toStartOf="@id/guidelineRegisterLeft"
-            app:layout_constraintTop_toBottomOf="@id/buttonRegisterRegister" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Facebook"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="@id/facebookRegister"
-            app:layout_constraintEnd_toEndOf="@id/facebookRegister"
-            app:layout_constraintStart_toStartOf="@id/facebookRegister"
-            app:layout_constraintTop_toTopOf="@id/facebookRegister" />
-
-
-        <ImageView
-            android:id="@+id/googleRegister"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:src="@drawable/google_login"
-            app:layout_constraintEnd_toEndOf="@id/guidelineRegisterRight"
-            app:layout_constraintTop_toBottomOf="@id/buttonRegisterRegister" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Google"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="@id/googleRegister"
-            app:layout_constraintEnd_toEndOf="@id/googleRegister"
-            app:layout_constraintStart_toStartOf="@id/googleRegister"
-            app:layout_constraintTop_toTopOf="@id/googleRegister" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineRegisterLeft"
