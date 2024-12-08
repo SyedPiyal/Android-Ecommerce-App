@@ -12,7 +12,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class AuthRepository @Inject constructor(
-    private val apiService: ApiService
+    @Named("reqres") private val apiService: ApiService
 ) {
 
     // A generic function to handle API calls for different requests

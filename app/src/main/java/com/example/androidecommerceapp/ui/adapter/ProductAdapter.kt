@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.bumptech.glide.Glide
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.dataModel.Product
 
@@ -21,9 +22,13 @@ class ProductAdapter(private val products: List<Product>) : RecyclerView.Adapter
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = products[position]
-        holder.productName.text = product.name
-        holder.productPrice.text = product.price
-        holder.productImage.setImageResource(product.imageResId)
+        holder.productName.text = product.title
+        holder.productPrice.text = "$${product.price}"
+//        holder.productImage.setImageResource(product.imageResId)
+        // Load image using Glide (or Picasso)
+        Glide.with(holder.productImage.context)
+            .load(product.image)
+            .into(holder.productImage)
     }
 
     override fun getItemCount(): Int = products.size

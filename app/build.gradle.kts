@@ -56,6 +56,11 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.android.compiler)
 
+    // glide
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
+
+    
     ksp (libs.hilt.android.compiler.v2511)
 
     implementation(libs.androidx.core.ktx)

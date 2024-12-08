@@ -7,7 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.GridView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +24,12 @@ import com.example.androidecommerceapp.ui.adapter.CategoryAdapter
 import com.example.androidecommerceapp.ui.adapter.OfferAdapter
 import com.example.androidecommerceapp.ui.adapter.ProductAdapter
 import com.example.androidecommerceapp.ui.productDetails.ProductDetailsActivity
+import com.example.androidecommerceapp.utils.ResultState
+import com.example.androidecommerceapp.utils.ToastTypeM
+import com.example.androidecommerceapp.utils.ToastUtils
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -30,14 +38,13 @@ class HomeFragment : Fragment() {
     private lateinit var categoryAdapter: CategoryAdapter
     private lateinit var productAdapter: ProductAdapter
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+
     private val binding get() = _binding!!
+    private val homeViewModel: HomeViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        val homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -70,23 +77,40 @@ class HomeFragment : Fragment() {
         categoryAdapter = CategoryAdapter(categories)
         recyclerView.adapter = categoryAdapter
 
-        // Sample data for the products
-        val products = listOf(
-            Product(R.drawable.shoe2, "Nike", "$ 1200"),
-            Product(R.drawable.shoe2, "Adidas", "$ 1200"),
-            Product(R.drawable.shoe2, "Puma", "$ 1200"),
-            Product(R.drawable.shoe2, "Reebok", "$ 1200"),
-            Product(R.drawable.shoe2, "Nike", "$ 1200"),
-            Product(R.drawable.shoe2, "Adidas", "$ 1200"),
-            Product(R.drawable.shoe2, "Puma", "$ 1200"),
-            Product(R.drawable.shoe2, "Reebok", "$ 1200"),
-        )
+
 
         // Set up the RecyclerView with StaggeredGridLayoutManager
         val productGridView: RecyclerView = binding.productRvView
         val layoutManager =
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL) // 2 columns
-        val productAdapter = ProductAdapter(products)
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
+        // Observe LiveData from the ViewModel
+        homeViewModel.products.observe(viewLifecycleOwner, Observer { resource ->
+            when (resource) {
+                is ResultState.Loading -> {
+//                    binding.progressBar.visibility = View.VISIBLE // Show loading
+                    binding.productRvView.visibility = View.GONE // Hide the RecyclerView while loading
+                }
+                is ResultState.Success -> {
+//                    binding.progressBar.visibility = View.GONE // Hide loading
+                    binding.productRvView.visibility = View.VISIBLE // Show the RecyclerView
+                    // Update the adapter with the fetched products
+                    productAdapter = ProductAdapter(resource.data)
+                    recyclerView.adapter = productAdapter
+                }
+                is ResultState.Error -> {
+//                    binding.progressBar.visibility = View.GONE // Hide loading
+                    ToastUtils.showCustomToast(
+                        requireContext(),
+                         "Loading Failed",
+                        ToastTypeM.ERROR
+                    )// Show error
+                }
+            }
+        })
+
+        // Fetch products when the fragment is created
+        homeViewModel.fetchProducts()
 
         productGridView.layoutManager = layoutManager
         productGridView.adapter = productAdapter
