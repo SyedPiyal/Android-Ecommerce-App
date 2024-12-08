@@ -22,4 +22,5 @@
     <string name="profile_email">johndoe@example.com</string>
     <string name="option_icon">op_icon</string>
     <string name="orders">You have no past orders.</string>
+    <string name="demo_text">Demo Text</string>
 </resources>

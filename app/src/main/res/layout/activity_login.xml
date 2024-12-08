@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.auth.LoginActivity">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -45,6 +46,7 @@
             android:background="@drawable/edit_text_border"
             android:hint="Email"
             android:inputType="textEmailAddress"
+            android:textColor="@color/black"
             android:textColorHint="@color/black"
             app:layout_constraintEnd_toEndOf="@id/guidelineLoginRight"
             app:layout_constraintStart_toStartOf="@id/guidelineLoginLeft"
@@ -52,45 +54,55 @@
 
         <EditText
             android:id="@+id/edPasswordLogin"
+            style="@style/editText"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            app:layout_constraintStart_toStartOf="@id/guidelineLoginLeft"
-            app:layout_constraintEnd_toEndOf="@id/guidelineLoginRight"
-            app:layout_constraintTop_toBottomOf="@id/edEmailLogin"
-            style="@style/editText"
-            android:hint="Password"
-            android:textColorHint="@color/black"
+            android:layout_marginTop="15dp"
             android:background="@drawable/edit_text_border"
+            android:hint="Password"
             android:inputType="textPassword"
-            android:layout_marginTop="15dp"/>
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            app:layout_constraintEnd_toEndOf="@id/guidelineLoginRight"
+            app:layout_constraintStart_toStartOf="@id/guidelineLoginLeft"
+            app:layout_constraintTop_toBottomOf="@id/edEmailLogin" />
+
+        <ImageView
+            android:id="@+id/ivTogglePasswordVisibility"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="Toggle password visibility"
+            android:src="@drawable/ic_eye_on"
+            app:layout_constraintBottom_toBottomOf="@+id/edPasswordLogin"
+            app:layout_constraintEnd_toEndOf="@+id/edPasswordLogin"
+            app:layout_constraintTop_toBottomOf="@+id/edEmailLogin"
+            app:layout_constraintVertical_bias="0.79" />
 
         <TextView
             android:id="@+id/tvForgotPasswordLogin"
+            style="@style/h2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/h2"
-            app:layout_constraintStart_toStartOf="@id/guidelineLoginLeft"
-            app:layout_constraintTop_toBottomOf="@id/edPasswordLogin"
-            android:textAlignment="center"
             android:gravity="center"
             android:text="Forgot password"
+            android:textAlignment="center"
             android:textColor="@color/black"
-            />
-
-
+            app:layout_constraintStart_toStartOf="@id/guidelineLoginLeft"
+            app:layout_constraintTop_toBottomOf="@id/edPasswordLogin" />
 
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonLoginLogin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/button_shape"
-            app:layout_constraintTop_toBottomOf="@id/tvForgotPasswordLogin"
-            app:layout_constraintStart_toStartOf="@id/guidelineLoginLeft"
-            app:layout_constraintEnd_toEndOf="@id/guidelineLoginRight"
             android:layout_marginTop="15dp"
+            android:background="@drawable/button_shape"
             android:text="@string/login"
-            />
+            app:layout_constraintEnd_toEndOf="@id/guidelineLoginRight"
+            app:layout_constraintStart_toStartOf="@id/guidelineLoginLeft"
+            app:layout_constraintTop_toBottomOf="@id/tvForgotPasswordLogin" />
 
         <TextView
             android:id="@+id/tvDontHaveAccount"

@@ -9,13 +9,14 @@ import com.example.androidecommerceapp.utils.ResultState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
+import javax.inject.Named
 
 class AuthRepository @Inject constructor(
     private val apiService: ApiService
 ) {
 
     // A generic function to handle API calls for different requests
-    suspend fun <T> makeApiCall(
+    private suspend fun <T> makeApiCall(
         apiCall: suspend () -> T
     ): Flow<ResultState<T>> = flow {
         try {
@@ -35,9 +36,9 @@ class AuthRepository @Inject constructor(
     }
 
     // Signup function
-    suspend fun signup(email: String, password: String, name: String): Flow<ResultState<SignupResponse>> {
+    suspend fun signup(email: String, password: String): Flow<ResultState<SignupResponse>> {
         return makeApiCall {
-            apiService.signup(SignupRequest(email, password, name))
+            apiService.signup(SignupRequest(email, password))
         }
     }
 }

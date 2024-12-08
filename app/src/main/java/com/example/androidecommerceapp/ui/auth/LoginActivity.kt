@@ -2,25 +2,36 @@ package com.example.androidecommerceapp.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.androidecommerceapp.MainActivity
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.databinding.ActivityLoginBinding
-import com.example.androidecommerceapp.ui.productDetails.ProductDetailsActivity
+import com.example.androidecommerceapp.utils.PasswordUtils
 import com.example.androidecommerceapp.utils.ResultState
+import com.example.androidecommerceapp.utils.ToastTypeM
+import com.example.androidecommerceapp.utils.ToastUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val authViewModel: AuthViewModel by viewModels()
+
+    private var isPasswordVisible: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,22 +45,63 @@ class LoginActivity : AppCompatActivity() {
             authViewModel.login(email, password)
         }
 
-        // Observe login and signup state
-        lifecycleScope.launchWhenStarted {
-            authViewModel.authState.collect { result ->
-                when (result) {
-                    is ResultState.Loading -> {
-                        // Show loading spinner
-                    }
-                    is ResultState.Success -> {
-                        // Handle success (e.g., navigate to the main screen)
-                        Toast.makeText(this@LoginActivity, "Success: ${result.data}", Toast.LENGTH_SHORT).show()
-                    }
-                    is ResultState.Error -> {
-                        // Show error message
-                        Toast.makeText(this@LoginActivity, result.exception.message, Toast.LENGTH_SHORT).show()
+        binding.tvDontHaveAccount.setOnClickListener {
+            val intent = Intent(this@LoginActivity, SignupActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+        // Toggle password visibility
+        binding.ivTogglePasswordVisibility.setOnClickListener {
+            isPasswordVisible = PasswordUtils.togglePasswordVisibility(
+                binding.edPasswordLogin, binding.ivTogglePasswordVisibility, isPasswordVisible
+            )
+        }
+
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                authViewModel.authState.collect { result ->
+                    when (result) {
+                        is ResultState.Loading -> {
+                            // Show loading spinner
+                        }
+
+                        is ResultState.Success -> {
+                            // Show success toast
+                            ToastUtils.showCustomToast(
+                                this@LoginActivity, "Login Successful!",
+                                ToastTypeM.SUCCESS
+                            )
+
+                            val intent = Intent(
+                                this@LoginActivity,
+                                MainActivity::class.java
+                            )
+                            startActivity(intent)
+                            finish()
+
+                        }
+
+                        is ResultState.Error -> {
+
+                            ToastUtils.showCustomToast(
+                                this@LoginActivity,
+                                result.exception.message ?: "Login Failed",
+                                ToastTypeM.ERROR
+                            )
+                        }
                     }
                 }
+            }
+        }
+
+        // Observe toast events and display custom toasts
+        lifecycleScope.launch {
+            authViewModel.toastEvent.collect { toastEvent ->
+                ToastUtils.showCustomToast(
+                    this@LoginActivity, toastEvent.message,
+                    toastEvent.type
+                )
             }
         }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -58,4 +110,5 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
     }
+
 }

@@ -10,6 +10,10 @@
     <color name="edBack">#F7F7F7</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="success_yellow">#FFEB3B</color>  <!-- Yellow color for success -->
+    <color name="error_red">#F44336</color>
+
+
     <color name="colorSelected">#2196F3</color>
     <color name="colorUnselected">#FFFFFF</color>
 

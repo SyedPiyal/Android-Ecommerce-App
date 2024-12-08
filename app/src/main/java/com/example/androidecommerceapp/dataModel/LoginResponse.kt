@@ -1,8 +1,7 @@
 package com.example.androidecommerceapp.dataModel
 
-data class LoginRequest(
+data class LoginResponse(
+    val id: Int,
     val email: String,
-    val password: String
+    val token: String
 )
-
-
