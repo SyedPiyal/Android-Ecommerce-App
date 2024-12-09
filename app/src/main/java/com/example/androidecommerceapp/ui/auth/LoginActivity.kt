@@ -1,6 +1,8 @@
 package com.example.androidecommerceapp.ui.auth
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.InputType
 import android.widget.ImageView
@@ -32,12 +34,17 @@ class LoginActivity : AppCompatActivity() {
     private val authViewModel: AuthViewModel by viewModels()
 
     private var isPasswordVisible: Boolean = false
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Initialize SharedPreferences
+        sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+
 
         binding.buttonLoginLogin.setOnClickListener {
             val email = binding.edEmailLogin.text.toString()
@@ -71,6 +78,7 @@ class LoginActivity : AppCompatActivity() {
                             ToastUtils.showCustomToast(
                                 this@LoginActivity, "Login Successful!", ToastTypeM.SUCCESS
                             )
+                            saveLoginStatus(true)
 
                             val intent = Intent(
                                 this@LoginActivity, MainActivity::class.java
@@ -106,6 +114,12 @@ class LoginActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    private fun saveLoginStatus(isLoggedIn: Boolean) {
+        sharedPreferences.edit()
+            .putBoolean("is_logged_in", isLoggedIn)
+            .apply()
     }
 
 }

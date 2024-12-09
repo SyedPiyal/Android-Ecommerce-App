@@ -51,17 +51,17 @@ android {
 dependencies {
 
 
-    implementation (libs.squareup.retrofit)
-    implementation (libs.squareup.converter.gson)
+    implementation(libs.squareup.retrofit)
+    implementation(libs.squareup.converter.gson)
     implementation(libs.hilt.android)
     implementation(libs.hilt.android.compiler)
 
     // glide
-    implementation (libs.glide)
-    annotationProcessor (libs.compiler)
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
 
-    
-    ksp (libs.hilt.android.compiler.v2511)
+
+    ksp(libs.hilt.android.compiler.v2511)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
