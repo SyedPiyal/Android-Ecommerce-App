@@ -8,24 +8,30 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.dataModel.Category
+import com.example.androidecommerceapp.databinding.ItemCategoryBinding
 
-class CategoryAdapter(private val categories: List<Category>) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+class CategoryAdapter(private var categories: List<String>) :
+    RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+
+    inner class CategoryViewHolder(val binding: ItemCategoryBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.category_item, parent, false)
-        return CategoryViewHolder(view)
+        val binding =
+            ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return CategoryViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val category = categories[position]
-        holder.categoryImage.setImageResource(category.imageResId)  // Set the image resource
-        holder.categoryTitle.text = category.name  // Set the category name
+        holder.binding.textViewCategory.text = category
     }
 
     override fun getItemCount(): Int = categories.size
 
-    class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val categoryImage: ImageView = view.findViewById(R.id.category_image)
-        val categoryTitle: TextView = view.findViewById(R.id.category_title)
+    fun setData(newCategories: List<String>) {
+        categories = newCategories
+        notifyDataSetChanged()
     }
 }
+

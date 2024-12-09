@@ -9,7 +9,7 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class ProductRepository @Inject constructor(
-    @Named("fakestoreapi") private val apiService: FakeStoreApiService
+    private val apiService: FakeStoreApiService
 ) {
 
     // Use Flow to emit data asynchronously
@@ -21,6 +21,29 @@ class ProductRepository @Inject constructor(
             emit(ResultState.Success(response)) // emit success with data
         } catch (e: Exception) {
             emit(ResultState.Error(e)) // emit error
+        }
+    }
+    // This method returns a Flow that emits the result of the API call (Loading, Success, or Error)
+    suspend fun getProductById(productId: Int): Flow<ResultState<Product>> = flow {
+        emit(ResultState.Loading) // Emit loading state before fetching data
+        try {
+            // Fetch product by ID from the API
+            val response = apiService.getProductById(productId)
+            emit(ResultState.Success(response)) // Emit success with the product data
+        } catch (e: Exception) {
+            emit(ResultState.Error(e)) // Emit error state if something goes wrong
+        }
+    }
+
+    // for product categories
+    suspend fun getCategories(): Flow<ResultState<List<String>>> = flow {
+        emit(ResultState.Loading) // Emit loading state
+        try {
+            // Fetch categories from the API
+            val response = apiService.getCategories()
+            emit(ResultState.Success(response)) // Emit success with data
+        } catch (e: Exception) {
+            emit(ResultState.Error(e)) // Emit error state
         }
     }
 }

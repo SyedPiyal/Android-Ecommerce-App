@@ -25,13 +25,6 @@ object AppModule {
             .build()
     }
 
-    @Provides
-    @Singleton
-    @Named("reqres")
-    fun provideApiService(retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
-    }
-
     // Second Retrofit client for fakestoreapi.com API
     @Provides
     @Singleton
@@ -45,8 +38,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    @Named("fakestoreapi")
-    fun provideApiServiceFakeStore(retrofit: Retrofit): FakeStoreApiService {
+    fun provideApiService(@Named("reqres") retrofit: Retrofit): ApiService {
+        return retrofit.create(ApiService::class.java)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideApiServiceFakeStore(@Named("fakestoreapi") retrofit: Retrofit): FakeStoreApiService {
         return retrofit.create(FakeStoreApiService::class.java)
     }
 }

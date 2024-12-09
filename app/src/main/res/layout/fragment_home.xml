@@ -11,113 +11,41 @@
         android:layout_height="wrap_content"
         tools:context=".ui.home.HomeFragment">
 
-        <!-- Welcome Text at the top left -->
-        <TextView
-            android:id="@+id/welcome_text"
-            android:layout_width="wrap_content"
+        <!-- RecyclerView to display products -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewCategories"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/welcome_nto_the_world_of_shopping"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/search_edit_text"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/rounded_edittext"
-            android:drawableLeft="@drawable/ic_search"
-            android:hint="Search"
-            android:padding="8dp"
-            android:textColor="@android:color/black"
-            android:textColorHint="@android:color/darker_gray"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toStartOf="@+id/clear_search_button"
-            app:layout_constraintStart_toStartOf="@+id/welcome_text"
-            app:layout_constraintTop_toBottomOf="@id/welcome_text" />
-
-        <ImageButton
-            android:id="@+id/clear_search_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/rounded_edittext"
-            android:contentDescription="filter"
-            android:src="@drawable/ic_filter"
-            app:layout_constraintBottom_toBottomOf="@id/search_edit_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/search_edit_text"
-            app:layout_constraintVertical_bias="0.8" />
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/offer_slider"
+            android:id="@+id/rv_product"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal"
-            android:scrollbars="none"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/search_edit_text" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/category_slider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal"
-            android:scrollbars="none"
-            app:layout_constraintEnd_toEndOf="@+id/offer_slider"
-            app:layout_constraintStart_toStartOf="@+id/offer_slider"
-            app:layout_constraintTop_toBottomOf="@+id/offer_slider" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Popular"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/category_slider"
-            app:layout_constraintTop_toBottomOf="@+id/category_slider" />
-
-        <TextView
-            android:id="@+id/tvSeeAll"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="See All"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView"
-            app:layout_constraintEnd_toEndOf="@+id/category_slider"
-            app:layout_constraintTop_toTopOf="@+id/textView" />
-
-        <!-- Replace GridView with RecyclerView for Product Grid -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/productRvView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="50dp"
-            android:scrollbars="none"
-            android:overScrollMode="never"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toBottomOf="@+id/recyclerViewCategories" />
+
+        <!-- ProgressBar to show loading -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.537"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.45" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

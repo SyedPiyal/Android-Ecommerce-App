@@ -69,13 +69,11 @@ class LoginActivity : AppCompatActivity() {
                         is ResultState.Success -> {
                             // Show success toast
                             ToastUtils.showCustomToast(
-                                this@LoginActivity, "Login Successful!",
-                                ToastTypeM.SUCCESS
+                                this@LoginActivity, "Login Successful!", ToastTypeM.SUCCESS
                             )
 
                             val intent = Intent(
-                                this@LoginActivity,
-                                MainActivity::class.java
+                                this@LoginActivity, MainActivity::class.java
                             )
                             startActivity(intent)
                             finish()
@@ -99,8 +97,7 @@ class LoginActivity : AppCompatActivity() {
         lifecycleScope.launch {
             authViewModel.toastEvent.collect { toastEvent ->
                 ToastUtils.showCustomToast(
-                    this@LoginActivity, toastEvent.message,
-                    toastEvent.type
+                    this@LoginActivity, toastEvent.message, toastEvent.type
                 )
             }
         }

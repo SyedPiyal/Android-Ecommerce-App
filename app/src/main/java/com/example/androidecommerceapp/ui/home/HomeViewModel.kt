@@ -16,15 +16,24 @@ class HomeViewModel @Inject constructor(
     private val productRepository: ProductRepository
 ) : ViewModel() {
 
-    // LiveData for products
     private val _products = MutableLiveData<ResultState<List<Product>>>()
     val products: LiveData<ResultState<List<Product>>> get() = _products
 
-    // Use Flow to collect data asynchronously and update LiveData
-    fun fetchProducts() {
+    private val _categories = MutableLiveData<ResultState<List<String>>>()
+    val categories: LiveData<ResultState<List<String>>> get() = _categories
+
+    fun getProducts() {
         viewModelScope.launch {
-            productRepository.getProducts().collect { resource ->
-                _products.value = resource
+            productRepository.getProducts().collect {
+                _products.postValue(it)
+            }
+        }
+    }
+
+    fun getCategories() {
+        viewModelScope.launch {
+            productRepository.getCategories().collect {
+                _categories.postValue(it)
             }
         }
     }
