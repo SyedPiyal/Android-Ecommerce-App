@@ -10,7 +10,8 @@ import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.dataModel.Category
 import com.example.androidecommerceapp.databinding.ItemCategoryBinding
 
-class CategoryAdapter(private var categories: List<String>) :
+class CategoryAdapter(private var categories: List<String>,
+                      private val onCategoryClick: (String) -> Unit) :
     RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
     inner class CategoryViewHolder(val binding: ItemCategoryBinding) :
@@ -25,6 +26,11 @@ class CategoryAdapter(private var categories: List<String>) :
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val category = categories[position]
         holder.binding.textViewCategory.text = category
+
+        // Set OnClickListener for the category item
+        holder.itemView.setOnClickListener {
+            onCategoryClick(category) // Pass clicked category
+        }
     }
 
     override fun getItemCount(): Int = categories.size

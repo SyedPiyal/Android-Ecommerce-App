@@ -2,7 +2,6 @@ package com.example.androidecommerceapp.ui.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import com.example.androidecommerceapp.databinding.FragmentHomeBinding
 import com.example.androidecommerceapp.ui.adapter.CategoryAdapter
 import com.example.androidecommerceapp.ui.adapter.ProductAdapter
 import com.example.androidecommerceapp.ui.productDetails.DetailsActivity
+import com.example.androidecommerceapp.ui.productList.ProductListActivity
 import com.example.androidecommerceapp.utils.ResultState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,7 +38,16 @@ class HomeFragment : Fragment() {
 
         // for categories
         // Initialize RecyclerView for categories
-        categoryAdapter = CategoryAdapter(emptyList()) // Empty list initially
+//        categoryAdapter = CategoryAdapter(emptyList()) // Empty list initially
+
+        // Initialize CategoryAdapter with an item click listener
+        categoryAdapter = CategoryAdapter(emptyList()) { category ->
+            // Navigate to ProductListActivity with the selected category
+            val intent = Intent(requireContext(), ProductListActivity::class.java).apply {
+                putExtra("CATEGORY", category) // Pass the selected category
+            }
+            startActivity(intent)
+        }
         binding.recyclerViewCategories.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerViewCategories.adapter = categoryAdapter
