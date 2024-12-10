@@ -13,7 +13,9 @@ import com.example.androidecommerceapp.database.ProductEntity
 import com.example.androidecommerceapp.ui.favorites.FavoritesFragment
 
 
-class FavoriteAdapter(private val favoriteItems: MutableList<ProductEntity>) : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
+class FavoriteAdapter(private val favoriteItems: MutableList<ProductEntity>,
+                      private val onItemClicked: (ProductEntity) -> Unit) :
+    RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
 
     class FavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val productImage: ImageView = itemView.findViewById(R.id.favorite_image)
@@ -23,7 +25,8 @@ class FavoriteAdapter(private val favoriteItems: MutableList<ProductEntity>) : R
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_favorite, parent, false)
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_favorite, parent, false)
         return FavoriteViewHolder(itemView)
     }
 
@@ -32,12 +35,17 @@ class FavoriteAdapter(private val favoriteItems: MutableList<ProductEntity>) : R
 
         // Set product name, price, and image
         holder.productName.text = product.title
-        holder.productPrice.text = "$${product.description}" // Adjust according to actual price field
+        holder.productPrice.text = "$${product.price}" // Adjust according to actual price field
         Glide.with(holder.itemView.context)
             .load(product.image)  // Assuming product.image contains the image URL
             .placeholder(R.drawable.placeholder_image)
             .error(R.drawable.error_image)
             .into(holder.productImage)
+
+        // Handle item click
+        holder.itemView.setOnClickListener {
+            onItemClicked(product) // Pass the clicked product to the fragment
+        }
 
         // Handle remove button click
         holder.removeButton.setOnClickListener {

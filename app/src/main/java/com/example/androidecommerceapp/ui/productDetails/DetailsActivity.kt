@@ -42,25 +42,58 @@ class DetailsActivity : AppCompatActivity() {
 
         // Retrieve the Product object
         val product: Product? = intent.getSerializableExtra("PRODUCT") as? Product
-
+        val productEntity: ProductEntity? = intent.getSerializableExtra("PRODUCT") as? ProductEntity
         // Use the retrieved product object as needed
-        product?.let {
-            tv_price.text = "$ ${it.price}"
-            tv_title.text = it.title
-            tv_description.text = it.description
-            Glide.with(this).load(it.image).into(imageView)
 
-            Log.d("id---->", "${it.id}")
+//        product?.let {
+//            tv_price.text = "$ ${it.price}"
+//            tv_title.text = it.title
+//            tv_description.text = it.description
+//            Glide.with(this).load(it.image).into(imageView)
+//
+//            Log.d("id---->", "${it.id}")
+//
+//
+//            //add data in roomdb
+//            // Save the product ID when the user clicks the "Favorites" button
+//            binding.favoritesButton.setOnClickListener { button ->
+//                val productEntity = ProductEntity(
+//                    id = it.id,
+//                    title = it.title,
+//                    description = it.description,
+//                    image = it.image,
+//                    price = it.price
+//                )
+//                // Add product to favorites
+//                detailsViewModel.addToFavorites(productEntity)
+//
+//                Toast.makeText(
+//                    applicationContext, "Product added to favorites",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//
+//            // remove data
+//
+//
+//        }
 
+        if (product != null) {
+            // If Product is not null, set its data
+            tv_price.text = "$ ${product.price}"
+            tv_title.text = product.title
+            tv_description.text = product.description
+            Glide.with(this).load(product.image).into(imageView)
 
-            //add data in roomdb
-            // Save the product ID when the user clicks the "Favorites" button
+            Log.d("id---->", "${product.id}")
+
             binding.favoritesButton.setOnClickListener { button ->
                 val productEntity = ProductEntity(
-                    id = it.id,
-                    title = it.title,
-                    description = it.description,
-                    image = it.image
+                    id = product.id,
+                    title = product.title,
+                    description = product.description,
+                    image = product.image,
+                    price = product.price
                 )
                 // Add product to favorites
                 detailsViewModel.addToFavorites(productEntity)
@@ -70,10 +103,18 @@ class DetailsActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        } else if (productEntity != null) {
+            // If ProductEntity is not null, set its data
+            tv_price.text = "$ ${productEntity.price}"
+            tv_title.text = productEntity.title
+            tv_description.text = productEntity.description
+            Glide.with(this).load(productEntity.image).into(imageView)
 
-            // remove data
-
-
+            Log.d("id---->", "${productEntity.id}")
+        } else {
+            // Handle the case where neither Product nor ProductEntity is provided
+            Toast.makeText(this, "No product data found", Toast.LENGTH_SHORT).show()
+            finish() // Close the activity if no data is provided
         }
         detailsViewModel.getFavorites()
 

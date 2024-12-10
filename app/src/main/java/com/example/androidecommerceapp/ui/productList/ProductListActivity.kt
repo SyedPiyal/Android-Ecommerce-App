@@ -34,7 +34,7 @@ class ProductListActivity : AppCompatActivity() {
         val selectedCategory = intent.getStringExtra("CATEGORY")
 
         selectedCategory.let {
-            Log.d("tag", "Data is here ---> ${it}")
+
         }
 
         // Initialize RecyclerView and Adapter

@@ -1,5 +1,6 @@
 package com.example.androidecommerceapp.ui.favorites
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.example.androidecommerceapp.dataModel.FavoriteItem
 import com.example.androidecommerceapp.database.ProductEntity
 import com.example.androidecommerceapp.databinding.FragmentFavoritesBinding
 import com.example.androidecommerceapp.ui.adapter.FavoriteAdapter
+import com.example.androidecommerceapp.ui.productDetails.DetailsActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,7 +45,12 @@ class FavoritesFragment : Fragment() {
         emptyFavoritesMessage = binding.emptyFavoritesMessage
 
         // Set up RecyclerView and adapter
-        favoriteAdapter = FavoriteAdapter(favoriteItems)
+        favoriteAdapter = FavoriteAdapter(favoriteItems) { selectedProduct ->
+            val intent = Intent(requireContext(), DetailsActivity::class.java).apply {
+                putExtra("PRODUCT", selectedProduct) // Pass the selected product
+            }
+            startActivity(intent)
+        }
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = favoriteAdapter
 

@@ -67,7 +67,6 @@ dependencies {
     implementation(libs.androidx.room.common)
     annotationProcessor (libs.compiler)
 
-    
     ksp (libs.hilt.android.compiler.v2511)
 
     implementation(libs.androidx.core.ktx)
