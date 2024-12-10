@@ -58,6 +58,9 @@ class DetailsActivity : AppCompatActivity() {
             binding.favoritesButton.setOnClickListener { button ->
                 val productEntity = ProductEntity(
                     id = it.id,
+                    title = it.title,
+                    description = it.description,
+                    image = it.image
                 )
                 // Add product to favorites
                 detailsViewModel.addToFavorites(productEntity)
@@ -69,13 +72,7 @@ class DetailsActivity : AppCompatActivity() {
             }
 
             // remove data
-            binding.appCompatButton.setOnClickListener { button ->
-                val productEntity = ProductEntity(
-                    id = it.id,
-                )
-                // Add product to favorites
-                detailsViewModel.removeFromFavorites(productEntity)
-            }
+
 
         }
         detailsViewModel.getFavorites()
