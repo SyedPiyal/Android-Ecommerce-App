@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +14,9 @@ import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.dataModel.FavoriteItem
 import com.example.androidecommerceapp.databinding.FragmentFavoritesBinding
 import com.example.androidecommerceapp.ui.adapter.FavoriteAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FavoritesFragment : Fragment() {
 
     private var _binding: FragmentFavoritesBinding? = null
@@ -26,17 +29,20 @@ class FavoritesFragment : Fragment() {
     private lateinit var favoriteAdapter: FavoriteAdapter
     private val favoriteItems = mutableListOf<FavoriteItem>()
 
+    private val favoritesViewModel: FavoritesViewModel by viewModels()
+    private lateinit var tv_title: TextView
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(FavoritesViewModel::class.java)
 
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        tv_title = binding.tvWhyy
 
         // Initialize views
         recyclerView = binding.recyclerViewFavorites
@@ -48,6 +54,16 @@ class FavoritesFragment : Fragment() {
         recyclerView.adapter = favoriteAdapter
 
         loadFavorites() // Load the list of favorites (can be from API or database)
+
+        // Observe the favorite products
+        favoritesViewModel.favorites.observe(viewLifecycleOwner) { favorites ->
+
+            val favoriteIds = favorites.map { it.id }
+            tv_title.text = favoriteIds.toString()
+        }
+
+        // Fetch favorites when the fragment is created
+        favoritesViewModel.getFavorites()
 
 
         return root

@@ -18,5 +18,5 @@ interface ApiService {
     @POST("register")
     suspend fun signup(@Body request: SignupRequest): SignupResponse
 
-    // Add other API methods as needed
+
 }

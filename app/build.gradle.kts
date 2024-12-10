@@ -50,6 +50,12 @@ android {
 
 dependencies {
 
+    val room_version = "2.6.1"
+
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
 
     implementation (libs.squareup.retrofit)
     implementation (libs.squareup.converter.gson)
@@ -58,6 +64,7 @@ dependencies {
 
     // glide
     implementation (libs.glide)
+    implementation(libs.androidx.room.common)
     annotationProcessor (libs.compiler)
 
     

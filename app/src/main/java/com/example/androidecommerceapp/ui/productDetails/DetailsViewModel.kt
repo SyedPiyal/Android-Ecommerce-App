@@ -1,4 +1,4 @@
-package com.example.androidecommerceapp.ui.favorites
+package com.example.androidecommerceapp.ui.productDetails
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,14 +11,25 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavoritesViewModel  @Inject constructor(
+class DetailsViewModel @Inject constructor(
     private val productRepositoryDao: ProductRepositoryDao
 ) : ViewModel() {
 
     private val _favorites = MutableLiveData<List<ProductEntity>>()
     val favorites: LiveData<List<ProductEntity>> get() = _favorites
 
-    // Get the list of favorites from the database
+    fun addToFavorites(product: ProductEntity) {
+        viewModelScope.launch {
+            productRepositoryDao.addProductToFavorites(product)
+        }
+    }
+
+    fun removeFromFavorites(product: ProductEntity) {
+        viewModelScope.launch {
+            productRepositoryDao.removeProductFromFavorites(product)
+        }
+    }
+
     fun getFavorites() {
         viewModelScope.launch {
             productRepositoryDao.getFavorites().collect {
