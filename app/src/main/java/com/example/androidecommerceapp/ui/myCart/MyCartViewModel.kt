@@ -3,11 +3,38 @@ package com.example.androidecommerceapp.ui.myCart
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.androidecommerceapp.database.CartEntity
+import com.example.androidecommerceapp.repository.CartRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MyCartViewModel : ViewModel() {
+@HiltViewModel
+class MyCartViewModel @Inject constructor(
+    private val cartRepository: CartRepository
+) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "$550"
+    private val _cartItems = MutableLiveData<List<CartEntity>>()
+    val cartItems: LiveData<List<CartEntity>> get() = _cartItems
+
+    fun addToCart(cartItem: CartEntity) {
+        viewModelScope.launch {
+            cartRepository.addItemToCart(cartItem)
+        }
     }
-    val text: LiveData<String> = _text
+
+    fun removeFromCart(cartItem: CartEntity) {
+        viewModelScope.launch {
+            cartRepository.removeItemFromCart(cartItem)
+        }
+    }
+
+    fun getCartItems() {
+        viewModelScope.launch {
+            cartRepository.getCartItems().collect {
+                _cartItems.postValue(it)
+            }
+        }
+    }
 }

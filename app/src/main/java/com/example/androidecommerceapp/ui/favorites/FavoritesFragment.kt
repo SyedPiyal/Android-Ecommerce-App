@@ -45,12 +45,14 @@ class FavoritesFragment : Fragment() {
         emptyFavoritesMessage = binding.emptyFavoritesMessage
 
         // Set up RecyclerView and adapter
-        favoriteAdapter = FavoriteAdapter(favoriteItems) { selectedProduct ->
+        favoriteAdapter = FavoriteAdapter(favoriteItems, { selectedProduct ->
             val intent = Intent(requireContext(), DetailsActivity::class.java).apply {
-                putExtra("PRODUCT", selectedProduct) // Pass the selected product
+                putExtra("PRODUCT", selectedProduct)
             }
             startActivity(intent)
-        }
+        }, { productToRemove ->
+            favoritesViewModel.removeFromFavorites(productToRemove) // Remove from DB and refresh list
+        })
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = favoriteAdapter
 

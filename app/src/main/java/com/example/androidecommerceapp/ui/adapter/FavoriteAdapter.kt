@@ -13,8 +13,11 @@ import com.example.androidecommerceapp.database.ProductEntity
 import com.example.androidecommerceapp.ui.favorites.FavoritesFragment
 
 
-class FavoriteAdapter(private val favoriteItems: MutableList<ProductEntity>,
-                      private val onItemClicked: (ProductEntity) -> Unit) :
+class FavoriteAdapter(
+    private val favoriteItems: MutableList<ProductEntity>,
+    private val onItemClicked: (ProductEntity) -> Unit,
+    private val onRemoveClicked: (ProductEntity) -> Unit
+) :
     RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
 
     class FavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -49,11 +52,7 @@ class FavoriteAdapter(private val favoriteItems: MutableList<ProductEntity>,
 
         // Handle remove button click
         holder.removeButton.setOnClickListener {
-            // Here, you'd need to remove the product from the database
-            // You should call a method in ViewModel to handle removal.
-            favoriteItems.removeAt(position)
-            notifyItemRemoved(position)
-            // You can call ViewModel method to remove the product from Room DB
+            onRemoveClicked(product)
         }
     }
 

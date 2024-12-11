@@ -4,45 +4,41 @@ package com.example.androidecommerceapp.ui.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.androidecommerceapp.dataModel.CartProduct
-import com.example.androidecommerceapp.databinding.CartProductItemBinding
+import com.bumptech.glide.Glide
+import com.example.androidecommerceapp.database.CartEntity
+import com.example.androidecommerceapp.databinding.ItemCartBinding
 
 
-class CartProductAdapter(private val productList: List<CartProduct>) :
-    RecyclerView.Adapter<CartProductAdapter.CartProductViewHolder>() {
+class CartProductAdapter(
+    private val cartItems: List<CartEntity>,
+    private val onRemoveItemClick: (CartEntity) -> Unit
+) : RecyclerView.Adapter<CartProductAdapter.CartViewHolder>() {
 
-    inner class CartProductViewHolder(val binding: CartProductItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(cartProduct: CartProduct) {
-            binding.imageCartProduct.setImageResource(cartProduct.image)
-            binding.tvProductCartName.text = cartProduct.name
-            binding.tvProductCartPrice.text = cartProduct.price
-            binding.tvCartProductQuantity.text = cartProduct.quantity.toString()
-            binding.imageCartProductColor.setImageResource(cartProduct.color)
-            binding.tvCartProductSize.text = cartProduct.size
-
-            // Handle plus and minus image clicks (if necessary)
-            binding.imagePlus.setOnClickListener {
-                // Increase quantity
-            }
-            binding.imageMinus.setOnClickListener {
-                // Decrease quantity
-            }
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
+        val binding = ItemCartBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return CartViewHolder(binding)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartProductViewHolder {
-        val binding =
-            CartProductItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CartProductViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: CartProductViewHolder, position: Int) {
-        val currentProduct = productList[position]
-        holder.bind(currentProduct)
+    override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
+        val item = cartItems[position]
+        holder.bind(item)
     }
 
     override fun getItemCount(): Int {
-        return productList.size
+        return cartItems.size
+    }
+
+    inner class CartViewHolder(private val binding: ItemCartBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(cartItem: CartEntity) {
+            binding.tvTitle.text = cartItem.title
+            binding.tvPrice.text = "$${cartItem.price}"
+            binding.tvQuantity.text = "Quantity: ${cartItem.quantity}"
+            Glide.with(binding.root.context).load(cartItem.image).into(binding.ivImage)
+
+            binding.btnRemove.setOnClickListener {
+                onRemoveItemClick(cartItem)
+            }
+        }
     }
 }
+

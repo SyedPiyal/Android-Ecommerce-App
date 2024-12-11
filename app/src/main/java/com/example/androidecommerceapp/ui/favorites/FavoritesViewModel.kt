@@ -27,4 +27,12 @@ class FavoritesViewModel  @Inject constructor(
             }
         }
     }
+    // Remove a product from the favorites
+    fun removeFromFavorites(product: ProductEntity) {
+        viewModelScope.launch {
+            productRepositoryDao.removeProductFromFavorites(product)
+            getFavorites() // Refresh the favorites list after removal
+        }
+    }
+
 }

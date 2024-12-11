@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
-    private val productRepositoryDao: ProductRepositoryDao
+    private val productRepositoryDao: ProductRepositoryDao,
 ) : ViewModel() {
 
     private val _favorites = MutableLiveData<List<ProductEntity>>()

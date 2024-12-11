@@ -5,10 +5,13 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.androidecommerceapp.database.AppDatabase
+import com.example.androidecommerceapp.database.CartDao
 import com.example.androidecommerceapp.database.ProductDao
+import com.example.androidecommerceapp.repository.CartRepository
 import com.example.androidecommerceapp.repository.ProductRepositoryDao
 import com.example.androidecommerceapp.service.ApiService
 import com.example.androidecommerceapp.service.FakeStoreApiService
+import com.example.androidecommerceapp.ui.myCart.MyCartViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -79,5 +82,22 @@ object AppModule {
         return ProductRepositoryDao(productDao)
     }
 
+    @Provides
+    @Singleton
+    fun provideCartDao(database: AppDatabase): CartDao {
+        return database.cartDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartRepository(cartDao: CartDao): CartRepository {
+        return CartRepository(cartDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartViewModel(cartRepository: CartRepository): MyCartViewModel {
+        return MyCartViewModel(cartRepository)
+    }
 
 }
