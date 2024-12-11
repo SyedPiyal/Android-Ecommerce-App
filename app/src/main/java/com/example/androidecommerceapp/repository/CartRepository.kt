@@ -9,15 +9,23 @@ class CartRepository @Inject constructor(
     private val cartDao: CartDao
 ) {
 
+    // Function to get all cart items
+    suspend fun getCartItems(): Flow<List<CartEntity>> {
+        return cartDao.getAllCartItems()  // Returns a flow of all cart items
+    }
+
+    // Function to add an item to the cart
     suspend fun addItemToCart(cartItem: CartEntity) {
-        cartDao.insertCartItem(cartItem)
+        cartDao.insertCartItem(cartItem)  // Insert or update cart item based on the primary key
     }
 
-    suspend fun removeItemFromCart(cartItem: CartEntity) {
-        cartDao.deleteCartItem(cartItem)
+    // Function to update an item in the cart (usually called when quantity changes)
+    suspend fun updateCartItem(cartItem: CartEntity) {
+        cartDao.updateCartItem(cartItem)  // Update the item with new quantity
     }
 
-    fun getCartItems(): Flow<List<CartEntity>> {
-        return cartDao.getAllCartItems()
+    // Function to remove an item from the cart
+    suspend fun removeFromCart(cartItem: CartEntity) {
+        cartDao.deleteCartItem(cartItem)  // Remove the cart item from the database
     }
 }

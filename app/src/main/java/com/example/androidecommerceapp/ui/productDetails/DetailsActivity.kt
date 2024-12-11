@@ -115,7 +115,8 @@ class DetailsActivity : AppCompatActivity() {
                 title = product.title,
                 description = product.description,
                 image = product.image,
-                price = product.price
+                price = product.price,
+                quantity = 1
             )
             // Add product to cart
             cartViewModel.addToCart(cartItem)

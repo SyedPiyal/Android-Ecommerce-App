@@ -18,23 +18,42 @@ class MyCartViewModel @Inject constructor(
     private val _cartItems = MutableLiveData<List<CartEntity>>()
     val cartItems: LiveData<List<CartEntity>> get() = _cartItems
 
+    private val _totalPrice = MutableLiveData<Double>()
+    val totalPrice: LiveData<Double> get() = _totalPrice
+
     fun addToCart(cartItem: CartEntity) {
         viewModelScope.launch {
             cartRepository.addItemToCart(cartItem)
         }
     }
 
-    fun removeFromCart(cartItem: CartEntity) {
-        viewModelScope.launch {
-            cartRepository.removeItemFromCart(cartItem)
-        }
-    }
-
     fun getCartItems() {
         viewModelScope.launch {
-            cartRepository.getCartItems().collect {
-                _cartItems.postValue(it)
+            cartRepository.getCartItems().collect { items ->
+                _cartItems.postValue(items)
+                updateTotalPrice(items)  // Recalculate the total price
             }
         }
     }
+
+    fun updateCartItem(cartItem: CartEntity) {
+        viewModelScope.launch {
+            cartRepository.updateCartItem(cartItem)
+            getCartItems()  // Refresh the cart items after update
+        }
+    }
+
+    fun removeFromCart(cartItem: CartEntity) {
+        viewModelScope.launch {
+            cartRepository.removeFromCart(cartItem)
+            getCartItems()  // Refresh the cart items after removal
+        }
+    }
+
+    private fun updateTotalPrice(cartItems: List<CartEntity>) {
+        val total = cartItems.sumOf { it.getTotalPrice() }
+        _totalPrice.postValue(total)
+    }
+
+
 }

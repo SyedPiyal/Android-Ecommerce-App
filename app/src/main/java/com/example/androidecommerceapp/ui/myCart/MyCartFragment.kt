@@ -38,20 +38,20 @@ class MyCartFragment : Fragment() {
         _binding = FragmentMyCartBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        cartAdapter = CartProductAdapter(cartItems) { cartItem ->
+        cartAdapter = CartProductAdapter(cartItems, { cartItem ->
             cartViewModel.removeFromCart(cartItem)
-        }
+        }, { cartItem ->
+            cartViewModel.updateCartItem(cartItem)
+        })
 
         binding.recyclerViewCart.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewCart.adapter = cartAdapter
-        // Fetch cart items
-        cartViewModel.getCartItems()
-
 
         cartViewModel.cartItems.observe(viewLifecycleOwner) { items ->
             if (items.isEmpty()) {
                 binding.recyclerViewCart.visibility = View.GONE
                 binding.emptyCartMessage.visibility = View.VISIBLE
+                cartAdapter.notifyDataSetChanged()
             } else {
                 binding.recyclerViewCart.visibility = View.VISIBLE
                 binding.emptyCartMessage.visibility = View.GONE
@@ -60,6 +60,18 @@ class MyCartFragment : Fragment() {
                 cartAdapter.notifyDataSetChanged()
             }
         }
+
+        cartViewModel.totalPrice.observe(viewLifecycleOwner) { total ->
+//            binding.tvTotalPrice.text = "Total: $${total}"
+            // Format the total price to show 2 decimal places
+            val formattedTotal = String.format("%.2f", total)
+
+            // Update the TextView with the formatted total
+            binding.tvTotalPrice.text = "Total: $$formattedTotal"
+
+        }
+
+        cartViewModel.getCartItems()
 
         return root
     }
