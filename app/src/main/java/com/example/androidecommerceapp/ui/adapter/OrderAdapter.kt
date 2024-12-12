@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androidecommerceapp.R
-import com.example.androidecommerceapp.dataModel.Order
 import com.example.androidecommerceapp.database.OrderEntity
-import com.example.androidecommerceapp.databinding.ItemOrderBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -35,7 +33,7 @@ class OrderAdapter(private val orders: List<OrderEntity>) :
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
         val order = orders[position]
         holder.productTitle.text = order.title
-        holder.productStatus.text = "Processing"
+        holder.productStatus.text = order.status
         holder.productPrice.text = "Total Price $${order.price}"
         holder.orderQuantity.text = "Quantity : 1"
         holder.orderDate.text =

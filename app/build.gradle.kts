@@ -51,6 +51,7 @@ android {
 dependencies {
 
     val room_version = "2.6.1"
+    val workManagerVersion = "2.9.1"
 
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
@@ -59,15 +60,20 @@ dependencies {
 
     implementation (libs.squareup.retrofit)
     implementation (libs.squareup.converter.gson)
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.android.compiler)
 
     // glide
     implementation (libs.glide)
     implementation(libs.androidx.room.common)
     annotationProcessor (libs.compiler)
 
-    ksp (libs.hilt.android.compiler.v2511)
+    implementation("com.google.dagger:hilt-android:2.49")
+    ksp("com.google.dagger:hilt-compiler:2.49")
+    implementation("androidx.hilt:hilt-work:1.1.0")
+    ksp("androidx.hilt:hilt-compiler:1.1.0")
+    ksp("com.google.dagger:hilt-android-compiler:2.49")
+    implementation ("androidx.work:work-runtime-ktx:$workManagerVersion")
+    implementation ("androidx.work:work-runtime:$workManagerVersion")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

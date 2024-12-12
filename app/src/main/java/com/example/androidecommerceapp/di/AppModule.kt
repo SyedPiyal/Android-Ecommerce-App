@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.work.WorkManager
 import com.example.androidecommerceapp.database.AppDatabase
 import com.example.androidecommerceapp.database.CartDao
 import com.example.androidecommerceapp.database.OrderDao
@@ -98,6 +99,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideCartViewModel(cartRepository: CartRepository): MyCartViewModel {
+        return MyCartViewModel(cartRepository)
+    }
+
+    @Provides
+    @Singleton
     fun provideOrderDao(database: AppDatabase): OrderDao {
         return database.orderDao()
     }
@@ -108,10 +115,12 @@ object AppModule {
         return OrderRepository(orderDao)
     }
 
+
+    // for work manager
+
     @Provides
-    @Singleton
-    fun provideCartViewModel(cartRepository: CartRepository): MyCartViewModel {
-        return MyCartViewModel(cartRepository)
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
+        return WorkManager.getInstance(context)
     }
 
 }

@@ -12,5 +12,6 @@ data class OrderEntity(
     val image: String,
     val price: Double,
     val quantity: Int,
-    val orderDate: Long // Timestamp of when the order was placed
+    val orderDate: Long,
+    var status: String = "Processing"
 ) : Serializable

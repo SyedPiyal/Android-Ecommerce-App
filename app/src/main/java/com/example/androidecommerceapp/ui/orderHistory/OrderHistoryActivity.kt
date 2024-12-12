@@ -10,7 +10,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androidecommerceapp.R
-import com.example.androidecommerceapp.dataModel.Order
 import com.example.androidecommerceapp.database.OrderEntity
 import com.example.androidecommerceapp.databinding.ActivityOrderHistoryBinding
 import com.example.androidecommerceapp.ui.adapter.OrderAdapter

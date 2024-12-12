@@ -8,16 +8,15 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.provider.ContactsContract
-import androidx.core.app.ActivityCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.example.androidecommerceapp.R
+import com.example.androidecommerceapp.components.OrderStatusUpdateWorker
 import com.example.androidecommerceapp.dataModel.Product
 import com.example.androidecommerceapp.database.CartEntity
 import com.example.androidecommerceapp.database.OrderEntity
@@ -25,9 +24,9 @@ import com.example.androidecommerceapp.database.ProductEntity
 import com.example.androidecommerceapp.databinding.ActivityDetailsBinding
 import com.example.androidecommerceapp.ui.myCart.MyCartViewModel
 import com.example.androidecommerceapp.ui.orderHistory.OrderHistoryViewModel
-import com.example.androidecommerceapp.ui.productList.ProductListActivity
 import com.example.androidecommerceapp.ui.shareDetails.ShareActivity
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.concurrent.TimeUnit
 
 
 @AndroidEntryPoint
@@ -133,12 +132,21 @@ class DetailsActivity : AppCompatActivity() {
                 description = product.description,
                 image = product.image,
                 price = product.price,
+                status = "Processing",
+                id = product.id,
                 quantity = 1, // You can adjust this to handle quantity input if needed
                 orderDate = System.currentTimeMillis() // Timestamp for when the order was placed
             )
 
             // Add product to orders
             orderHistoryViewModel.addOrder(orderItem)
+            // Get the orderId for the scheduled WorkManager tasks
+            val orderId = orderItem.id
+
+            // Schedule WorkManager tasks for order status updates after specific intervals
+            scheduleOrderStatusUpdates(orderId)
+
+
 
             Toast.makeText(applicationContext, "Product added to orders", Toast.LENGTH_SHORT).show()
         }
@@ -151,6 +159,33 @@ class DetailsActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    // Schedule WorkManager tasks to update order status and send notifications
+    private fun scheduleOrderStatusUpdates(orderId: Int) {
+        // Schedule WorkManager for the first status update (Shipped) after 2 minutes
+        val workRequestShipped = OneTimeWorkRequestBuilder<OrderStatusUpdateWorker>()
+            .addTag("01")
+            .setInitialDelay(30, TimeUnit.SECONDS)
+            .setInputData(workDataOf("ORDER_ID" to orderId))
+            .build()
+
+        // Schedule WorkManager for the second status update (Delivering) after 4 minutes
+        val workRequestDelivering = OneTimeWorkRequestBuilder<OrderStatusUpdateWorker>()
+            .setInitialDelay(1, TimeUnit.MINUTES)
+            .setInputData(workDataOf("ORDER_ID" to orderId))
+            .build()
+
+        // Schedule WorkManager for the final status update (Delivered) after 6 minutes
+        val workRequestDelivered = OneTimeWorkRequestBuilder<OrderStatusUpdateWorker>()
+            .setInitialDelay(90, TimeUnit.SECONDS)
+            .setInputData(workDataOf("ORDER_ID" to orderId))
+            .build()
+
+        // Enqueue WorkManager tasks
+        WorkManager.getInstance(applicationContext).enqueue(workRequestShipped)
+        WorkManager.getInstance(applicationContext).enqueue(workRequestDelivering)
+        WorkManager.getInstance(applicationContext).enqueue(workRequestDelivered)
     }
 
 
