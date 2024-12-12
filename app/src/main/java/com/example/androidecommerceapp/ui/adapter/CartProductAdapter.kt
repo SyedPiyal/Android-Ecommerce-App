@@ -42,6 +42,7 @@ class CartProductAdapter(
                 if (cartItem.quantity > 1) {
                     cartItem.quantity -= 1
                     Log.d("CartAdapter--->", "Decreased quantity: ${cartItem.quantity}")
+                    Log.d("CartAdapter--->", "Decreased price: ${cartItem.price * cartItem.quantity}")
                     binding.tvItemQuantity.text = cartItem.quantity.toString()
                     binding.tvQuantity.text = cartItem.quantity.toString()
                     onQuantityChanged(cartItem)  // Update the quantity in the repository
@@ -50,6 +51,7 @@ class CartProductAdapter(
 
             binding.btnIncrease.setOnClickListener {
                 cartItem.quantity += 1
+                Log.d("CartAdapter--->", "Increase price: ${cartItem.price * cartItem.quantity}")
                 Log.d("CartAdapter--->", "Increase quantity: ${cartItem.quantity}")
                 binding.tvItemQuantity.text = cartItem.quantity.toString()
                 binding.tvQuantity.text = cartItem.quantity.toString()

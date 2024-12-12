@@ -11,11 +11,16 @@ data class CartEntity(
     val description: String,
     val image: String,
     val price: Double,
-    var quantity: Int =1
+    var quantity: Int
 ) : Serializable {
 
     // Calculate the total price for the item based on quantity
     fun getTotalPrice(): Double {
         return price * quantity
+    }
+
+    // total quantity
+    fun getTotalQuantity(): Int {
+        return quantity
     }
 }

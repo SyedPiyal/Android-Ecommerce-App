@@ -4,16 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.androidecommerceapp.R
-import com.example.androidecommerceapp.dataModel.CartProduct
 import com.example.androidecommerceapp.database.CartEntity
+import com.example.androidecommerceapp.database.OrderEntity
 import com.example.androidecommerceapp.databinding.FragmentMyCartBinding
 import com.example.androidecommerceapp.ui.adapter.CartProductAdapter
+import com.example.androidecommerceapp.ui.orderHistory.OrderHistoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -29,6 +28,10 @@ class MyCartFragment : Fragment() {
     private lateinit var cartAdapter: CartProductAdapter
     private val cartItems = mutableListOf<CartEntity>()
     private val cartViewModel: MyCartViewModel by viewModels()
+    private val orderHistoryViewModel: OrderHistoryViewModel by viewModels()
+
+    private var totalPriceDat: Double = 0.0
+    private var totalQuantityDat: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -51,7 +54,6 @@ class MyCartFragment : Fragment() {
             if (items.isEmpty()) {
                 binding.recyclerViewCart.visibility = View.GONE
                 binding.emptyCartMessage.visibility = View.VISIBLE
-                cartAdapter.notifyDataSetChanged()
             } else {
                 binding.recyclerViewCart.visibility = View.VISIBLE
                 binding.emptyCartMessage.visibility = View.GONE
@@ -62,6 +64,7 @@ class MyCartFragment : Fragment() {
         }
 
         cartViewModel.totalPrice.observe(viewLifecycleOwner) { total ->
+            totalPriceDat=total
 //            binding.tvTotalPrice.text = "Total: $${total}"
             // Format the total price to show 2 decimal places
             val formattedTotal = String.format("%.2f", total)
@@ -71,7 +74,31 @@ class MyCartFragment : Fragment() {
 
         }
 
+        cartViewModel.totalQuantity.observe(viewLifecycleOwner) { totalQ ->
+
+            // Update the TextView with the formatted total
+            binding.tvTotalQuantity.text = "Total Quantity: $totalQ"
+            totalQuantityDat = totalQ
+
+        }
+
         cartViewModel.getCartItems()
+
+        binding.btnBuyNow.setOnClickListener {
+            val orderItem = OrderEntity(
+                title = "Shoe",
+                description = "description",
+                image = "image",
+                price = totalPriceDat,
+                status = "Processing",
+                id = 100,
+                quantity = totalQuantityDat, // You can adjust this to handle quantity input if needed
+                orderDate = System.currentTimeMillis() // Timestamp for when the order was placed
+            )
+            // Add product to orders
+            orderHistoryViewModel.addOrder(orderItem)
+
+        }
 
         return root
     }
