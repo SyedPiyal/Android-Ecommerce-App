@@ -20,9 +20,11 @@ import androidx.core.app.ActivityCompat
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.dataModel.Product
 import com.example.androidecommerceapp.database.CartEntity
+import com.example.androidecommerceapp.database.OrderEntity
 import com.example.androidecommerceapp.database.ProductEntity
 import com.example.androidecommerceapp.databinding.ActivityDetailsBinding
 import com.example.androidecommerceapp.ui.myCart.MyCartViewModel
+import com.example.androidecommerceapp.ui.orderHistory.OrderHistoryViewModel
 import com.example.androidecommerceapp.ui.productList.ProductListActivity
 import com.example.androidecommerceapp.ui.shareDetails.ShareActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +42,7 @@ class DetailsActivity : AppCompatActivity() {
 
     private val detailsViewModel: DetailsViewModel by viewModels()
     private val cartViewModel: MyCartViewModel by viewModels()
+    private val orderHistoryViewModel: OrderHistoryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,6 +127,23 @@ class DetailsActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, "Product added to cart", Toast.LENGTH_SHORT).show()
 
         }
+        binding.btnBuyNow.setOnClickListener {
+            val orderItem = OrderEntity(
+                title = product!!.title,
+                description = product.description,
+                image = product.image,
+                price = product.price,
+                quantity = 1, // You can adjust this to handle quantity input if needed
+                orderDate = System.currentTimeMillis() // Timestamp for when the order was placed
+            )
+
+            // Add product to orders
+            orderHistoryViewModel.addOrder(orderItem)
+
+            Toast.makeText(applicationContext, "Product added to orders", Toast.LENGTH_SHORT).show()
+        }
+
+
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->

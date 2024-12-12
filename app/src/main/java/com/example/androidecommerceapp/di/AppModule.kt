@@ -6,8 +6,10 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.androidecommerceapp.database.AppDatabase
 import com.example.androidecommerceapp.database.CartDao
+import com.example.androidecommerceapp.database.OrderDao
 import com.example.androidecommerceapp.database.ProductDao
 import com.example.androidecommerceapp.repository.CartRepository
+import com.example.androidecommerceapp.repository.OrderRepository
 import com.example.androidecommerceapp.repository.ProductRepositoryDao
 import com.example.androidecommerceapp.service.ApiService
 import com.example.androidecommerceapp.service.FakeStoreApiService
@@ -92,6 +94,18 @@ object AppModule {
     @Singleton
     fun provideCartRepository(cartDao: CartDao): CartRepository {
         return CartRepository(cartDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrderDao(database: AppDatabase): OrderDao {
+        return database.orderDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOrderRepository(orderDao: OrderDao): OrderRepository {
+        return OrderRepository(orderDao)
     }
 
     @Provides
