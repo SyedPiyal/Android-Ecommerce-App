@@ -13,8 +13,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.androidecommerceapp.MainActivity
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.databinding.ActivitySignupBinding
 import com.example.androidecommerceapp.utils.PasswordUtils
@@ -43,7 +45,8 @@ class SignupActivity : AppCompatActivity() {
             val email = binding.edEmailRegister.text.toString()
             val password = binding.edPasswordRegister.text.toString()
 
-            authViewModel.signup(email, password)
+            authViewModel.checkIfUserExists(email)
+            authViewModel.registerUser(email, password)
         }
         // Toggle password visibility
         binding.ivTogglePasswordVisibility.setOnClickListener {
@@ -52,36 +55,32 @@ class SignupActivity : AppCompatActivity() {
             )
         }
 
+        // Collecting the signupState from the ViewModel
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                authViewModel.authState.collect { result ->
-                    when (result) {
-                        is ResultState.Loading -> {
-                            // Show loading spinner
-                        }
+            authViewModel.signupState.collect { state ->
+                if (state.isSuccess) {
+                    // Show success message
+                    Toast.makeText(
+                        applicationContext,
+                        "Registration Successful!",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-                        is ResultState.Success -> {
-                            // Show success toast
-                            ToastUtils.showCustomToast(
-                                this@SignupActivity, "Login Successful!",
-                                ToastTypeM.SUCCESS
-                            )
-
-                            val intent = Intent(
-                                this@SignupActivity, LoginActivity::class.java
-                            )
-                            startActivity(intent)
-                            finish()
-
-                        }
-
-                        is ResultState.Error -> {
-                            ToastUtils.showCustomToast(
-                                this@SignupActivity,
-                                result.exception.message ?: "Login Failed",
-                                ToastTypeM.ERROR
-                            )
-                        }
+                    // Navigate to LoginActivity
+                    val intent = Intent(this@SignupActivity, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                if (state.isLoading) {
+                    // Show loading indicator (for example, a ProgressBar)
+                } else {
+                    // Hide loading indicator
+                    state.errorMessage?.let {
+                        Toast.makeText(
+                            applicationContext,
+                            "User Registration failed",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }

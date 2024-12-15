@@ -50,7 +50,7 @@ android {
 
 dependencies {
 
-    val room_version = "2.6.1"
+
     val workManagerVersion = "2.9.1"
 
     implementation(libs.androidx.room.runtime)

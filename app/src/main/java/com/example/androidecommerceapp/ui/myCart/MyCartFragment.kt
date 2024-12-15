@@ -77,7 +77,7 @@ class MyCartFragment : Fragment() {
         cartViewModel.totalQuantity.observe(viewLifecycleOwner) { totalQ ->
 
             // Update the TextView with the formatted total
-            binding.tvTotalQuantity.text = "Total Quantity: $totalQ"
+//            binding.tvTotalQuantity.text = "Total Quantity: $totalQ"
             totalQuantityDat = totalQ
 
         }

@@ -78,7 +78,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_shape"
         android:padding="8dp"
-        android:src="@drawable/ic_favorites"
+        android:src="@drawable/ic_favorite_border"
         app:layout_constraintEnd_toEndOf="@+id/productImage"
         app:layout_constraintTop_toTopOf="@+id/productImage" />
 

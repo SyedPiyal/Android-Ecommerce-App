@@ -12,11 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import android.content.Intent
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.example.androidecommerceapp.R
-import com.example.androidecommerceapp.components.OrderStatusUpdateWorker
 import com.example.androidecommerceapp.dataModel.Product
 import com.example.androidecommerceapp.database.CartEntity
 import com.example.androidecommerceapp.database.OrderEntity
@@ -25,8 +21,8 @@ import com.example.androidecommerceapp.databinding.ActivityDetailsBinding
 import com.example.androidecommerceapp.ui.myCart.MyCartViewModel
 import com.example.androidecommerceapp.ui.orderHistory.OrderHistoryViewModel
 import com.example.androidecommerceapp.ui.shareDetails.ShareActivity
+import com.example.androidecommerceapp.utils.OrderStatusScheduler
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.concurrent.TimeUnit
 
 
 @AndroidEntryPoint
@@ -54,10 +50,13 @@ class DetailsActivity : AppCompatActivity() {
         tv_description = binding.productDescription
         imageView = binding.productImage
 
-        // Retrieve the Product object
+        // Retrieve the Product object from database
         val product: Product? = intent.getSerializableExtra("PRODUCT") as? Product
+
+        // Retrieve the Product object from api
+
         val productEntity: ProductEntity? = intent.getSerializableExtra("PRODUCT") as? ProductEntity
-        // Use the retrieved product object as needed
+
 
         if (product != null) {
             // If Product is not null, set its data
@@ -68,6 +67,18 @@ class DetailsActivity : AppCompatActivity() {
 
             Log.d("id---->", "${product.id}")
 
+            // Observe the favorite status
+            detailsViewModel.isFavorite.observe(this) { isFavorite ->
+                if (isFavorite) {
+                    binding.favoritesButton.setImageResource(R.drawable.ic_favorite)
+                } else {
+                    binding.favoritesButton.setImageResource(R.drawable.ic_favorite_border)
+                }
+            }
+
+            // Check if the product is already in the favorites when the activity starts
+            detailsViewModel.checkIfFavorite(product.id)
+
             binding.favoritesButton.setOnClickListener { button ->
                 val productEntity = ProductEntity(
                     id = product.id,
@@ -76,13 +87,26 @@ class DetailsActivity : AppCompatActivity() {
                     image = product.image,
                     price = product.price
                 )
-                // Add product to favorites
-                detailsViewModel.addToFavorites(productEntity)
+                if (detailsViewModel.isFavorite.value == true) {
+                    detailsViewModel.removeFromFavorites(productEntity)
+                    Toast.makeText(
+                        applicationContext,
+                        "Product removed from favorites",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // Manually update the LiveData to reflect the "not favorite" state
+//                    detailsViewModel.setFavoriteState(false)
+                } else {
+                    detailsViewModel.addToFavorites(productEntity)
+                    Toast.makeText(
+                        applicationContext,
+                        "Product added to favorites",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    // Manually update the LiveData to reflect the "favorite" state
+//                    detailsViewModel.setFavoriteState(true)
 
-                Toast.makeText(
-                    applicationContext, "Product added to favorites",
-                    Toast.LENGTH_SHORT
-                ).show()
+                }
             }
         } else if (productEntity != null) {
             // If ProductEntity is not null, set its data
@@ -92,18 +116,48 @@ class DetailsActivity : AppCompatActivity() {
             Glide.with(this).load(productEntity.image).into(imageView)
 
             Log.d("id---->", "${productEntity.id}")
+
+            // Observe the favorite status
+            detailsViewModel.isFavorite.observe(this) { isFavorite ->
+                binding.favoritesButton.setImageResource(
+                    if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_border
+                )
+            }
+
+            // Same logic for favorites button
+            detailsViewModel.checkIfFavorite(productEntity.id)
+            binding.favoritesButton.setOnClickListener {
+                if (detailsViewModel.isFavorite.value == true) {
+                    detailsViewModel.removeFromFavorites(productEntity)
+                    Toast.makeText(
+                        applicationContext,
+                        "Product removed from favorites",
+                        Toast.LENGTH_SHORT
+                    ).show()
+//                    detailsViewModel.setFavoriteState(false)
+
+                } else {
+                    detailsViewModel.addToFavorites(productEntity)
+                    Toast.makeText(
+                        applicationContext,
+                        "Product added to favorites",
+                        Toast.LENGTH_SHORT
+                    ).show()
+//                    detailsViewModel.setFavoriteState(true)
+
+                }
+            }
         } else {
             // Handle the case where neither Product nor ProductEntity is provided
             Toast.makeText(this, "No product data found", Toast.LENGTH_SHORT).show()
-            finish() // Close the activity if no data is provided
+            finish()
         }
         detailsViewModel.getFavorites()
 
-        // Observe the favorite products
-        detailsViewModel.favorites.observe(this) { favorites ->
-            Log.d("Favorites", "Favorites count: ${favorites.size}")
-        }
-
+//        // Observe the favorite products
+//        detailsViewModel.favorites.observe(this) { favorites ->
+//            Log.d("Favorites", "Favorites count: ${favorites.size}")
+//        }
 
         // Share button click listener
         binding.btnShare.setOnClickListener {
@@ -134,25 +188,21 @@ class DetailsActivity : AppCompatActivity() {
                 price = product.price,
                 status = "Processing",
                 id = product.id,
-                quantity = 1, // You can adjust this to handle quantity input if needed
-                orderDate = System.currentTimeMillis() // Timestamp for when the order was placed
+                quantity = 1,
+                orderDate = System.currentTimeMillis()
             )
 
             // Add product to orders
             orderHistoryViewModel.addOrder(orderItem)
+
             // Get the orderId for the scheduled WorkManager tasks
             val orderId = orderItem.id
 
             // Schedule WorkManager tasks for order status updates after specific intervals
-            scheduleOrderStatusUpdates(orderId)
-
-
+            OrderStatusScheduler.scheduleOrderStatusUpdates(orderId)
 
             Toast.makeText(applicationContext, "Product added to orders", Toast.LENGTH_SHORT).show()
         }
-
-
-
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -161,32 +211,10 @@ class DetailsActivity : AppCompatActivity() {
         }
     }
 
-    // Schedule WorkManager tasks to update order status and send notifications
-    private fun scheduleOrderStatusUpdates(orderId: Int) {
-        // Schedule WorkManager for the first status update (Shipped) after 2 minutes
-        val workRequestShipped = OneTimeWorkRequestBuilder<OrderStatusUpdateWorker>()
-            .addTag("01")
-            .setInitialDelay(30, TimeUnit.SECONDS)
-            .setInputData(workDataOf("ORDER_ID" to orderId))
-            .build()
 
-        // Schedule WorkManager for the second status update (Delivering) after 4 minutes
-        val workRequestDelivering = OneTimeWorkRequestBuilder<OrderStatusUpdateWorker>()
-            .setInitialDelay(1, TimeUnit.MINUTES)
-            .setInputData(workDataOf("ORDER_ID" to orderId))
-            .build()
-
-        // Schedule WorkManager for the final status update (Delivered) after 6 minutes
-        val workRequestDelivered = OneTimeWorkRequestBuilder<OrderStatusUpdateWorker>()
-            .setInitialDelay(90, TimeUnit.SECONDS)
-            .setInputData(workDataOf("ORDER_ID" to orderId))
-            .build()
-
-        // Enqueue WorkManager tasks
-        WorkManager.getInstance(applicationContext).enqueue(workRequestShipped)
-        WorkManager.getInstance(applicationContext).enqueue(workRequestDelivering)
-        WorkManager.getInstance(applicationContext).enqueue(workRequestDelivered)
+    override fun onResume() {
+        super.onResume()
+        detailsViewModel.initializeFavorites() // Ensure the favorite state is refreshed
     }
-
 
 }

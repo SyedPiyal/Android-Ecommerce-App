@@ -9,9 +9,11 @@ import com.example.androidecommerceapp.database.AppDatabase
 import com.example.androidecommerceapp.database.CartDao
 import com.example.androidecommerceapp.database.OrderDao
 import com.example.androidecommerceapp.database.ProductDao
+import com.example.androidecommerceapp.database.UserDao
 import com.example.androidecommerceapp.repository.CartRepository
 import com.example.androidecommerceapp.repository.OrderRepository
 import com.example.androidecommerceapp.repository.ProductRepositoryDao
+import com.example.androidecommerceapp.repository.UserRepository
 import com.example.androidecommerceapp.service.ApiService
 import com.example.androidecommerceapp.service.FakeStoreApiService
 import com.example.androidecommerceapp.ui.myCart.MyCartViewModel
@@ -113,6 +115,19 @@ object AppModule {
     @Singleton
     fun provideOrderRepository(orderDao: OrderDao): OrderRepository {
         return OrderRepository(orderDao)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideUserDao(database: AppDatabase): UserDao {
+        return database.userDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(userDao: UserDao): UserRepository {
+        return UserRepository(userDao)
     }
 
 
