@@ -65,6 +65,7 @@ object AppModule {
         return retrofit.create(FakeStoreApiService::class.java)
     }
 
+    // room database
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
