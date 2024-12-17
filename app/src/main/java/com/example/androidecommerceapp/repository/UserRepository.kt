@@ -14,6 +14,11 @@ class UserRepository @Inject constructor(private val userDao: UserDao) {
         userDao.insert(user)
     }
 
+    fun getUserByEmail(email: String): Flow<User?> {
+        return userDao.getUserByEmail(email)
+    }
+
+
     fun loginUser(email: String, password: String): Flow<User?> {
         return userDao.getUserByEmailAndPassword(email, password)
     }
@@ -23,7 +28,7 @@ class UserRepository @Inject constructor(private val userDao: UserDao) {
     }
 
     suspend fun updateUser(user: User) {
-        userDao.insert(user)
+        userDao.update(user)
     }
 
 }

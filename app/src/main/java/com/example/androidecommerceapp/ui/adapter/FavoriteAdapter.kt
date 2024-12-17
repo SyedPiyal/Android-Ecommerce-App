@@ -38,9 +38,9 @@ class FavoriteAdapter(
 
         // Set product name, price, and image
         holder.productName.text = product.title
-        holder.productPrice.text = "$${product.price}" // Adjust according to actual price field
+        holder.productPrice.text = "$${product.price}"
         Glide.with(holder.itemView.context)
-            .load(product.image)  // Assuming product.image contains the image URL
+            .load(product.image)
             .placeholder(R.drawable.placeholder_image)
             .error(R.drawable.error_image)
             .into(holder.productImage)

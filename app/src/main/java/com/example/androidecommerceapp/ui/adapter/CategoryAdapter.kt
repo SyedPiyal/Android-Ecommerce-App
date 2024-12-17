@@ -1,13 +1,8 @@
 package com.example.androidecommerceapp.ui.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.androidecommerceapp.R
-import com.example.androidecommerceapp.dataModel.Category
 import com.example.androidecommerceapp.databinding.ItemCategoryBinding
 
 class CategoryAdapter(private var categories: List<String>,

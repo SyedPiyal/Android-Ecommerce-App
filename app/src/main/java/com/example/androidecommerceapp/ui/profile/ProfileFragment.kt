@@ -1,7 +1,9 @@
 package com.example.androidecommerceapp.ui.profile
 
 
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -53,14 +55,17 @@ class ProfileFragment : Fragment() {
                     val intent = Intent(requireContext(), EditProfileActivity::class.java)
                     startActivity(intent)
                 }
+
                 "Order History" -> {
                     val intent = Intent(requireContext(), OrderHistoryActivity::class.java)
                     startActivity(intent)
                 }
+
                 "Payment Methods" -> {
                     val intent = Intent(requireContext(), PaymentMethodActivity::class.java)
                     startActivity(intent)
                 }
+
                 "Logout" -> {
                     showCustomLogoutDialog()
                 }
@@ -73,6 +78,7 @@ class ProfileFragment : Fragment() {
         }
         return binding.root
     }
+
     private fun showCustomLogoutDialog() {
         // Inflate the custom layout for the dialog
         val dialogView = layoutInflater.inflate(R.layout.dialog_custom, null)
@@ -96,7 +102,8 @@ class ProfileFragment : Fragment() {
 
         btnConfirm.setOnClickListener {
             customDialog.dismiss()  // Dismiss the dialog
-            performLogout()         // Call the logout logic
+            performLogout()
+
         }
 
         // Show the dialog
@@ -104,12 +111,19 @@ class ProfileFragment : Fragment() {
     }
 
     private fun performLogout() {
-        // Implement your logout logic here (e.g., clear user session, navigate to login screen, etc.)
-        Toast.makeText(requireContext(), "Logged out successfully", Toast.LENGTH_SHORT).show()
+        // Clear SharedPreferences data on logout
+        val sharedPreferences: SharedPreferences =
+            requireContext().getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear()  // Clears all the saved preferences (user data, login state, etc.)
+        editor.apply()
 
-        // Example: Navigate to login screen (or MainActivity)
+
+        Toast.makeText(requireContext(), "Log out", Toast.LENGTH_SHORT)
+            .show()
+
         val intent = Intent(requireContext(), LoginActivity::class.java)
         startActivity(intent)
-        activity?.finish()  // Close the ProfileActivity or Fragment
+        activity?.finish()
     }
 }

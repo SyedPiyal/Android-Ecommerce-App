@@ -2,27 +2,18 @@ package com.example.androidecommerceapp.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.example.androidecommerceapp.MainActivity
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.databinding.ActivitySignupBinding
 import com.example.androidecommerceapp.utils.PasswordUtils
-import com.example.androidecommerceapp.utils.ResultState
-import com.example.androidecommerceapp.utils.ToastTypeM
-import com.example.androidecommerceapp.utils.ToastUtils
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -39,6 +30,11 @@ class SignupActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val window = this.window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.statusBarColor = this.resources.getColor(R.color.colorSelected)
 
 
         binding.buttonRegisterRegister.setOnClickListener {
@@ -72,7 +68,7 @@ class SignupActivity : AppCompatActivity() {
                     finish()
                 }
                 if (state.isLoading) {
-                    // Show loading indicator (for example, a ProgressBar)
+                    // Show loading indicator
                 } else {
                     // Hide loading indicator
                     state.errorMessage?.let {

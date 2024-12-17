@@ -7,10 +7,12 @@ import javax.inject.Inject
 
 class OrderRepository @Inject constructor(private val orderDao: OrderDao) {
 
+    // add Order in Dao
     suspend fun addOrder(order: OrderEntity) {
         orderDao.insertOrder(order)
     }
 
+    // get all Order from Dao
     fun getAllOrders(): Flow<List<OrderEntity>> {
         return orderDao.getAllOrders()
     }

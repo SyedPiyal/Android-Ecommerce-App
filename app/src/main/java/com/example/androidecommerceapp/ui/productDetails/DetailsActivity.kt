@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import android.content.Intent
+import android.view.WindowManager
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.dataModel.Product
 import com.example.androidecommerceapp.database.CartEntity
@@ -44,6 +45,11 @@ class DetailsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val window = this.window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.statusBarColor = this.resources.getColor(R.color.colorSelected)
 
         tv_title = binding.productTitle
         tv_price = binding.productPrice

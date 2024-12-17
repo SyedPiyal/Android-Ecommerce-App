@@ -2,6 +2,7 @@ package com.example.androidecommerceapp.ui.orderHistory
 
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +24,7 @@ class OrderHistoryActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var orderAdapter: OrderAdapter
-    private val orderItems = mutableListOf<OrderEntity>() // List to store orders
+    private val orderItems = mutableListOf<OrderEntity>()
     private val orderHistoryViewModel: OrderHistoryViewModel by viewModels()
 
 
@@ -32,6 +33,11 @@ class OrderHistoryActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityOrderHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val window = this.window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.statusBarColor = this.resources.getColor(R.color.colorSelected)
 
 
         // Initialize RecyclerView and Adapter
@@ -56,11 +62,11 @@ class OrderHistoryActivity : AppCompatActivity() {
         }
 
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-//            insets
-//        }
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
     }
 
 }

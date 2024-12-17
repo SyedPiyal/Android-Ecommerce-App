@@ -2,6 +2,7 @@ package com.example.androidecommerceapp.ui.paymentMethod
 
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,6 +23,10 @@ class PaymentMethodActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityPaymentMethodBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val window = this.window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.statusBarColor = this.resources.getColor(R.color.colorSelected)
 
 
         // Initialize RecyclerView
@@ -32,16 +37,16 @@ class PaymentMethodActivity : AppCompatActivity() {
 
         if (paymentMethodsList.isEmpty()) {
             binding.emptyStateMessage.visibility = View.VISIBLE
-            binding. recyclerViewPaymentMethods.visibility = View.GONE
+            binding.recyclerViewPaymentMethods.visibility = View.GONE
         } else {
             paymentMethodAdapter = PaymentMethodAdapter(paymentMethodsList)
-            binding. recyclerViewPaymentMethods.adapter = paymentMethodAdapter
+            binding.recyclerViewPaymentMethods.adapter = paymentMethodAdapter
             binding.emptyStateMessage.visibility = View.GONE
             binding.recyclerViewPaymentMethods.visibility = View.VISIBLE
         }
 
         // Handle the "Add Payment Method" button click
-        binding. btnAddPaymentMethod.setOnClickListener {
+        binding.btnAddPaymentMethod.setOnClickListener {
 
             showAddPaymentMethodDialog()
         }
@@ -52,6 +57,7 @@ class PaymentMethodActivity : AppCompatActivity() {
             insets
         }
     }
+
     private fun getSavedPaymentMethods(): List<PaymentMethod> {
         return listOf(
             PaymentMethod("Visa **** 1234", "Credit Card", "12/24"),

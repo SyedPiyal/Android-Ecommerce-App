@@ -10,7 +10,6 @@ import com.example.androidecommerceapp.dataModel.ShoeSize
 
 class SizeAdapter(private val sizes: List<ShoeSize>) : RecyclerView.Adapter<SizeAdapter.SizeViewHolder>() {
 
-    // ViewHolder class
     inner class SizeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val sizeTextView: TextView = itemView.findViewById(R.id.sizeTextView)
     }

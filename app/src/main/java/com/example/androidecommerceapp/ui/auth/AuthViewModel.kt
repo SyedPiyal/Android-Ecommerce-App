@@ -5,12 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.androidecommerceapp.dataModel.LoginState
 import com.example.androidecommerceapp.dataModel.SignupState
-import com.example.androidecommerceapp.dataModel.ToastEvent
 import com.example.androidecommerceapp.database.User
 import com.example.androidecommerceapp.repository.AuthRepository
 import com.example.androidecommerceapp.repository.UserRepository
 import com.example.androidecommerceapp.utils.ResultState
-import com.example.androidecommerceapp.utils.ToastTypeM
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

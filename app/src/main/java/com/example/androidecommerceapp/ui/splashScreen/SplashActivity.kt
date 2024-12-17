@@ -5,16 +5,25 @@ import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.os.Handler
 import android.content.SharedPreferences
+import androidx.activity.enableEdgeToEdge
 import com.example.androidecommerceapp.MainActivity
+import com.example.androidecommerceapp.databinding.ActivityLoginBinding
+import com.example.androidecommerceapp.databinding.ActivitySplashBinding
 import com.example.androidecommerceapp.ui.auth.LoginActivity
 
 
 class SplashActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivitySplashBinding
+
     private val splashScreenDuration: Long = 2000 // 2 seconds delay
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        enableEdgeToEdge()
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Wait for splash screen to display, then check login status
         Handler().postDelayed({
@@ -24,10 +33,8 @@ class SplashActivity : AppCompatActivity() {
 
             // Navigate based on login status
             if (isLoggedIn) {
-                // If logged in, go to MainActivity
                 startActivity(Intent(this, MainActivity::class.java))
             } else {
-                // If not logged in, go to LoginActivity
                 startActivity(Intent(this, LoginActivity::class.java))
             }
 

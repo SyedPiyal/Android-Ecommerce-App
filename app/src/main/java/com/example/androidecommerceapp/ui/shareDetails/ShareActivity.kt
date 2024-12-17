@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.Manifest
 import android.annotation.SuppressLint
+import android.view.WindowManager
+import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.dataModel.Contact
 import com.example.androidecommerceapp.databinding.ActivityShareBinding
 import com.example.androidecommerceapp.ui.adapter.ContactsAdapter
@@ -27,6 +29,12 @@ class ShareActivity : AppCompatActivity() {
 
         binding = ActivityShareBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val window = this.window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.statusBarColor = this.resources.getColor(R.color.colorSelected)
+
 
         // Check and request permission
         if (ContextCompat.checkSelfPermission(

@@ -1,16 +1,19 @@
 package com.example.androidecommerceapp.ui.editProfile
 
+
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
+import com.example.androidecommerceapp.MainActivity
 import com.example.androidecommerceapp.R
-import com.example.androidecommerceapp.database.User
 import com.example.androidecommerceapp.databinding.ActivityEditProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,7 +22,7 @@ class EditProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEditProfileBinding
     private val editProfileViewModel: EditProfileViewModel by viewModels()
-    private lateinit var currentUser: User
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,72 +30,50 @@ class EditProfileActivity : AppCompatActivity() {
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val email = sharedPreferences.getString("email", "") // Get the stored email
 
-        if (email.isNullOrEmpty()) {
-            // Handle case where email is not found, maybe navigate back or show an error
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
-            finish()  // Or navigate to login screen if needed
-            return
-        }
-        // Fetch the user data
-        editProfileViewModel.fetchUserData(email)
+        val window = this.window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.statusBarColor = this.resources.getColor(R.color.colorSelected)
 
-        // Collect the user data from ViewModel
-        lifecycleScope.launchWhenStarted {
-            editProfileViewModel.userData.collect { user ->
+        // Retrieve the logged-in user's email from SharedPreferences
+        val sharedPreferences: SharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val email = sharedPreferences.getString("email", null)
 
-                Log.d("Data ----->", "${user?.email}")
+        if (email != null) {
+            // Use ViewModel to fetch user data from the Room database
+            editProfileViewModel.getUserByEmail(email).observe(this) { user ->
                 if (user != null) {
-                    currentUser = user
                     binding.edtEmail.setText(user.email)
                     binding.edtPassword.setText(user.password)
-                }else {
-
-                    Toast.makeText(applicationContext, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        // Handle update action
-        binding.btnSaveChanges.setOnClickListener {
-            val updatedEmail = binding.edtEmail.text.toString()
-            val updatedPassword = binding.edtPassword.text.toString()
-
-            val updatedUser = currentUser.copy(email = updatedEmail, password = updatedPassword)
-            editProfileViewModel.updateUserData(updatedUser)
-        }
-
-        // Toggle password visibility
-//        binding.ivTogglePasswordVisibility.setOnClickListener {
-//            isPasswordVisible = PasswordUtils.togglePasswordVisibility(
-//                binding.edPassword, binding.ivTogglePasswordVisibility, isPasswordVisible
-//            )
-//        }
-
-        // Collect the update state
-        lifecycleScope.launchWhenStarted {
-            editProfileViewModel.updateState.collect { state ->
-                if (state.isLoading) {
-                    // Show loading indicator (ProgressBar)
                 } else {
-                    // Hide loading indicator
-                    if (state.isSuccess) {
-                        Toast.makeText(applicationContext, "Profile Updated!", Toast.LENGTH_SHORT)
-                            .show()
-                        // Optionally, navigate back or show success
-                    } else {
-                        state.errorMessage?.let {
-                            Toast.makeText(applicationContext, it, Toast.LENGTH_SHORT).show()
-                        }
-                    }
+                    Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
 
-        ///sadhfhds
+
+
+
+        binding.btnSaveChanges.setOnClickListener {
+            try {
+//                val newEmail = binding.edtEmail.text.toString()
+                val password = binding.edtPassword.text.toString()
+                editProfileViewModel.updateUser(email?:"0", password)
+
+                Toast.makeText(applicationContext, "User data updated", Toast.LENGTH_SHORT).show()
+
+
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            } catch (e: Exception) {
+                Log.d("EditProfileActivity--->", "Update Error $e")
+            }
+        }
+
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
