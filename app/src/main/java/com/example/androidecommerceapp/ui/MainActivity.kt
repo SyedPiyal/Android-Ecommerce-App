@@ -1,4 +1,4 @@
-package com.example.androidecommerceapp
+package com.example.androidecommerceapp.ui
 
 import android.os.Bundle
 import android.view.WindowManager
@@ -8,6 +8,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 

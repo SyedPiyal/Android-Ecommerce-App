@@ -13,10 +13,8 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.androidecommerceapp.MainActivity
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.dataModel.ProfileOption
-import com.example.androidecommerceapp.databinding.FragmentMyCartBinding
 import com.example.androidecommerceapp.databinding.FragmentProfileBinding
 import com.example.androidecommerceapp.ui.adapter.ProfileOptionAdapter
 import com.example.androidecommerceapp.ui.auth.LoginActivity

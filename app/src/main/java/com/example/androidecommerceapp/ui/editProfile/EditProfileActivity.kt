@@ -12,7 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.androidecommerceapp.MainActivity
+import com.example.androidecommerceapp.ui.MainActivity
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.databinding.ActivityEditProfileBinding
 import dagger.hilt.android.AndroidEntryPoint

@@ -6,8 +6,7 @@ import android.content.Intent
 import android.os.Handler
 import android.content.SharedPreferences
 import androidx.activity.enableEdgeToEdge
-import com.example.androidecommerceapp.MainActivity
-import com.example.androidecommerceapp.databinding.ActivityLoginBinding
+import com.example.androidecommerceapp.ui.MainActivity
 import com.example.androidecommerceapp.databinding.ActivitySplashBinding
 import com.example.androidecommerceapp.ui.auth.LoginActivity
 

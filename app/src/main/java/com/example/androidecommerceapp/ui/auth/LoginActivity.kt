@@ -2,9 +2,7 @@ package com.example.androidecommerceapp.ui.auth
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
@@ -13,13 +11,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.androidecommerceapp.MainActivity
+import com.example.androidecommerceapp.ui.MainActivity
 import com.example.androidecommerceapp.R
-import com.example.androidecommerceapp.database.User
 import com.example.androidecommerceapp.databinding.ActivityLoginBinding
-import com.example.androidecommerceapp.ui.editProfile.EditProfileViewModel
 import com.example.androidecommerceapp.utils.PasswordUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
