@@ -7,25 +7,25 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.androidecommerceapp.ui.home.HomeFragment"
+        android:name="com.example.androidecommerceapp.view.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.androidecommerceapp.ui.favorites.FavoritesFragment"
+        android:name="com.example.androidecommerceapp.view.favorites.FavoritesFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_favorites" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.androidecommerceapp.ui.myCart.MyCartFragment"
+        android:name="com.example.androidecommerceapp.view.myCart.MyCartFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_my_cart" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.example.androidecommerceapp.ui.profile.ProfileFragment"
+        android:name="com.example.androidecommerceapp.view.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>

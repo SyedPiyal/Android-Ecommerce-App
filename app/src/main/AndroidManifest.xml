@@ -19,7 +19,7 @@
         android:theme="@style/Theme.AndroidEcommerceApp"
         tools:targetApi="31">
         <activity
-            android:name=".ui.splashScreen.SplashActivity"
+            android:name=".view.splashScreen.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,32 +28,32 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.shareDetails.ShareActivity"
+            android:name=".view.shareDetails.ShareActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.productList.ProductListActivity"
+            android:name=".view.productList.ProductListActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.productDetails.DetailsActivity"
+            android:name=".view.productDetails.DetailsActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.paymentMethod.PaymentMethodActivity"
+            android:name=".view.paymentMethod.PaymentMethodActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.orderHistory.OrderHistoryActivity"
+            android:name=".view.orderHistory.OrderHistoryActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.editProfile.EditProfileActivity"
+            android:name=".view.editProfile.EditProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.auth.SignupActivity"
+            android:name=".view.auth.SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.auth.LoginActivity"
+            android:name=".view.auth.LoginActivity"
             android:exported="false"
             android:label="@string/app_name" />
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".view.MainActivity"
             android:exported="false" />
 
         <provider

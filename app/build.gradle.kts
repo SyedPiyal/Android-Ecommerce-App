@@ -75,6 +75,7 @@ dependencies {
     implementation ("androidx.work:work-runtime:$workManagerVersion")
 
 
+    implementation (libs.material.v180)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

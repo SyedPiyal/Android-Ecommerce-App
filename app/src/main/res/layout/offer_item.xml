@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="130dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
     android:layout_marginLeft="8dp"
+    android:layout_marginTop="8dp"
     android:layout_marginRight="8dp"
+    android:layout_marginBottom="8dp"
     cardview:cardCornerRadius="8dp"
     cardview:cardElevation="4dp">
 
@@ -42,8 +42,9 @@
             android:layout_width="100dp"
             android:layout_height="85dp"
             android:layout_marginEnd="80dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/pant"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:src="@drawable/shoe"
             app:layout_constraintBottom_toBottomOf="@+id/offer_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/offer_text" />

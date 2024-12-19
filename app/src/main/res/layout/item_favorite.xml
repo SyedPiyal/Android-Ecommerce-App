@@ -19,7 +19,7 @@
             android:id="@+id/favorite_image"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/shoe2"
+            android:src="@drawable/shoe"
             android:contentDescription="Product Image"
             android:layout_gravity="center_vertical"/>
 
