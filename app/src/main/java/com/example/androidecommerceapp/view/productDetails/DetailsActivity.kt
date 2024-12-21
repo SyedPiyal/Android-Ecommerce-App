@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import android.content.Intent
 import android.view.WindowManager
+import androidx.lifecycle.Observer
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
@@ -23,12 +24,19 @@ import com.example.androidecommerceapp.database.CartEntity
 import com.example.androidecommerceapp.database.OrderEntity
 import com.example.androidecommerceapp.database.ProductEntity
 import com.example.androidecommerceapp.databinding.ActivityDetailsBinding
+import com.example.androidecommerceapp.utils.ResultState
+import com.example.androidecommerceapp.view.favorites.repository.FavoriteRepository
+import com.example.androidecommerceapp.view.favorites.viewModel.FavoritesViewModel
 import com.example.androidecommerceapp.view.myCart.viewModel.MyCartViewModel
 import com.example.androidecommerceapp.view.orderHistory.viewModel.OrderHistoryViewModel
 import com.example.androidecommerceapp.view.productDetails.viewModel.DetailsViewModel
 import com.example.androidecommerceapp.view.shareDetails.ShareActivity
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.migration.CustomInjection.inject
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -44,6 +52,8 @@ class DetailsActivity : AppCompatActivity() {
     private val detailsViewModel: DetailsViewModel by viewModels()
     private val cartViewModel: MyCartViewModel by viewModels()
     private val orderHistoryViewModel: OrderHistoryViewModel by viewModels()
+    private val favoriteViewModel: FavoritesViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,158 +71,45 @@ class DetailsActivity : AppCompatActivity() {
         tv_description = binding.productDescription
         imageView = binding.productImage
 
-        // Retrieve the Product object from database
-        val product: Product? = intent.getSerializableExtra("PRODUCT") as? Product
+        // Retrieve the Product id
+        val productId = intent.getIntExtra("PRODUCT",-1)
 
-        // Retrieve the Product object from api
+        Log.d("Id--->", productId.toString())
 
-        val productEntity: ProductEntity? = intent.getSerializableExtra("PRODUCT") as? ProductEntity
-
-
-        if (product != null) {
-            // If Product is not null, set its data
-            tv_price.text = "$ ${product.price}"
-            tv_title.text = product.title
-            tv_description.text = product.description
-            Glide.with(this).load(product.image).into(imageView)
-
-            Log.d("id---->", "${product.id}")
-
-            // Observe the favorite status
-            detailsViewModel.isFavorite.observe(this) { isFavorite ->
-                if (isFavorite) {
-                    binding.favoritesButton.setImageResource(R.drawable.ic_favorite)
-                } else {
-                    binding.favoritesButton.setImageResource(R.drawable.ic_favorite_border)
-                }
-            }
-
-            // Check if the product is already in the favorites when the activity starts
-            detailsViewModel.checkIfFavorite(product.id)
-
-            binding.favoritesButton.setOnClickListener { button ->
-                val productEntity = ProductEntity(
-                    id = product.id,
-                    title = product.title,
-                    description = product.description,
-                    image = product.image,
-                    price = product.price
-                )
-                if (detailsViewModel.isFavorite.value == true) {
-                    detailsViewModel.removeFromFavorites(productEntity)
-                    Toast.makeText(
-                        applicationContext,
-                        "Product removed from favorites",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    // Manually update the LiveData to reflect the "not favorite" state
-//                    detailsViewModel.setFavoriteState(false)
-                } else {
-                    detailsViewModel.addToFavorites(productEntity)
-                    Toast.makeText(
-                        applicationContext,
-                        "Product added to favorites",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    // Manually update the LiveData to reflect the "favorite" state
-//                    detailsViewModel.setFavoriteState(true)
-
-                }
-            }
-        } else if (productEntity != null) {
-            // If ProductEntity is not null, set its data
-            tv_price.text = "$ ${productEntity.price}"
-            tv_title.text = productEntity.title
-            tv_description.text = productEntity.description
-            Glide.with(this).load(productEntity.image).into(imageView)
-
-            Log.d("id---->", "${productEntity.id}")
-
-            // Observe the favorite status
-            detailsViewModel.isFavorite.observe(this) { isFavorite ->
-                binding.favoritesButton.setImageResource(
-                    if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_border
-                )
-            }
-
-            // Same logic for favorites button
-            detailsViewModel.checkIfFavorite(productEntity.id)
-            binding.favoritesButton.setOnClickListener {
-                if (detailsViewModel.isFavorite.value == true) {
-                    detailsViewModel.removeFromFavorites(productEntity)
-                    Toast.makeText(
-                        applicationContext,
-                        "Product removed from favorites",
-                        Toast.LENGTH_SHORT
-                    ).show()
-//                    detailsViewModel.setFavoriteState(false)
-
-                } else {
-                    detailsViewModel.addToFavorites(productEntity)
-                    Toast.makeText(
-                        applicationContext,
-                        "Product added to favorites",
-                        Toast.LENGTH_SHORT
-                    ).show()
-//                    detailsViewModel.setFavoriteState(true)
-
-                }
-            }
-        } else {
-            // Handle the case where neither Product nor ProductEntity is provided
-            Toast.makeText(this, "No product data found", Toast.LENGTH_SHORT).show()
-            finish()
-        }
-        detailsViewModel.getFavorites()
-
-//        // Observe the favorite products
-//        detailsViewModel.favorites.observe(this) { favorites ->
-//            Log.d("Favorites", "Favorites count: ${favorites.size}")
-//        }
-
-        // Share button click listener
-        binding.btnShare.setOnClickListener {
-            val intent = Intent(this, ShareActivity::class.java)
-            startActivity(intent)
+        // Fetch product details using the ViewModel
+        if (productId != -1) {
+            detailsViewModel.getProductById(productId)
         }
 
-        binding.btnAddtoCart.setOnClickListener {
-            val cartItem = CartEntity(
-                id = product!!.id,
-                title = product.title,
-                description = product.description,
-                image = product.image,
-                price = product.price,
-                quantity = 1
-            )
-            // Add product to cart
-            cartViewModel.addToCart(cartItem)
 
-            Toast.makeText(applicationContext, "Product added to cart", Toast.LENGTH_SHORT).show()
+        // Observe product details LiveData
+        detailsViewModel.productDetails.observe(this, Observer { result ->
+            when (result) {
+                is ResultState.Loading -> {
+//                    showLoading(true)
+                }
+                is ResultState.Success -> {
+                    // Display the product data
+//                    showLoading(false)
+                    var product = result.data
+                    tv_title.text = product.title
+                    tv_price.text = product.price.toString()
+                    tv_description.text = product.description
+                    Glide.with(this).load(product.image).into(imageView)
+                }
+                is ResultState.Error -> {
+//                    showLoading(false)
+//                    showError(result.error)
+                }
+            }
+        })
 
-        }
-        binding.btnBuyNow.setOnClickListener {
-            val orderItem = OrderEntity(
-                title = product!!.title,
-                description = product.description,
-                image = product.image,
-                price = product.price,
-                status = "Processing",
-                id = product.id,
-                quantity = 1,
-                orderDate = System.currentTimeMillis()
-            )
-
-            // Add product to orders
-            orderHistoryViewModel.addOrder(orderItem)
-
-            // Get the orderId for the scheduled WorkManager tasks
-            val orderId = orderItem.id
-
-            // Schedule WorkManager tasks for order status updates after specific intervals
-            scheduleOrderStatusUpdates(orderId)
-
-            Toast.makeText(applicationContext, "Product added to orders", Toast.LENGTH_SHORT).show()
+        // add to favorites
+        binding.favoritesButton.setOnClickListener {
+            if (productId != -1) {
+                // Add to favorites
+                favoriteViewModel.addProductToFavorites(productId)
+            }
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -253,7 +150,7 @@ class DetailsActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        detailsViewModel.initializeFavorites() // Ensure the favorite state is refreshed
+
     }
 
 }

@@ -1,21 +1,23 @@
 package com.example.androidecommerceapp.view.favorites
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.example.androidecommerceapp.database.ProductEntity
 import com.example.androidecommerceapp.databinding.FragmentFavoritesBinding
+import com.example.androidecommerceapp.utils.ResultState
 import com.example.androidecommerceapp.view.adapter.FavoriteAdapter
+import com.example.androidecommerceapp.view.dataModel.Product
 import com.example.androidecommerceapp.view.favorites.viewModel.FavoritesViewModel
-import com.example.androidecommerceapp.view.productDetails.DetailsActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FavoritesFragment : Fragment() {
@@ -26,7 +28,6 @@ class FavoritesFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var emptyFavoritesMessage: TextView
     private lateinit var favoriteAdapter: FavoriteAdapter
-    private val favoriteItems = mutableListOf<ProductEntity>() // Store the fetched products
 
     private val favoritesViewModel: FavoritesViewModel by viewModels()
 
@@ -42,35 +43,44 @@ class FavoritesFragment : Fragment() {
         recyclerView = binding.recyclerViewFavorites
         emptyFavoritesMessage = binding.emptyFavoritesMessage
 
-        // Set up RecyclerView and adapter
-        favoriteAdapter = FavoriteAdapter(favoriteItems, { selectedProduct ->
-            val intent = Intent(requireContext(), DetailsActivity::class.java).apply {
-                putExtra("PRODUCT", selectedProduct)
+        favoritesViewModel.fetchFavoriteProductIds()
+
+        favoritesViewModel.favoriteEntityIds.observe(viewLifecycleOwner, Observer { favoriteIds ->
+            // Create a list to hold the product details
+            val productDetailsList = mutableListOf<Product>()
+
+            // Fetch product details for each favorite ID
+            viewLifecycleOwner.lifecycleScope.launch {
+                favoriteIds.forEach { favoriteProduct ->
+                    favoritesViewModel.getProductById(favoriteProduct.productId).collect { result ->
+                        when (result) {
+                            is ResultState.Success -> {
+                                productDetailsList.add(result.data)
+                                if (productDetailsList.size == favoriteIds.size) {
+                                    // Update the RecyclerView adapter when all products are fetched
+                                    favoriteAdapter =
+                                        FavoriteAdapter(requireContext(), productDetailsList)
+                                    binding.recyclerViewFavorites.adapter = favoriteAdapter
+                                }
+                            }
+
+                            is ResultState.Error -> {
+                                // Handle error
+                                Toast.makeText(
+                                    context,
+                                    "Error: ${result.exception}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            ResultState.Loading -> {
+
+                            }
+                        }
+                    }
+                }
             }
-            startActivity(intent)
-        }, { productToRemove ->
-            favoritesViewModel.removeFromFavorites(productToRemove) // Remove from DB and refresh list
         })
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = favoriteAdapter
-
-        // Fetch favorites from ViewModel
-        favoritesViewModel.getFavorites()
-
-        // Observe the favorites list from ViewModel
-        favoritesViewModel.favorites.observe(viewLifecycleOwner) { favorites ->
-            if (favorites.isEmpty()) {
-                recyclerView.visibility = View.GONE
-                emptyFavoritesMessage.visibility = View.VISIBLE
-            } else {
-                recyclerView.visibility = View.VISIBLE
-                emptyFavoritesMessage.visibility = View.GONE
-                // Update the adapter's data
-                favoriteItems.clear()
-                favoriteItems.addAll(favorites)
-                favoriteAdapter.notifyDataSetChanged()
-            }
-        }
 
         return root
     }

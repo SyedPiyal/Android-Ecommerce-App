@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.work.WorkManager
 import com.example.androidecommerceapp.database.AppDatabase
 import com.example.androidecommerceapp.database.CartDao
+import com.example.androidecommerceapp.database.FavoriteDao
 import com.example.androidecommerceapp.database.OrderDao
 import com.example.androidecommerceapp.database.ProductDao
 import com.example.androidecommerceapp.database.UserDao
@@ -12,6 +13,7 @@ import com.example.androidecommerceapp.view.myCart.repository.CartRepository
 import com.example.androidecommerceapp.view.orderHistory.repository.OrderRepository
 import com.example.androidecommerceapp.view.productDetails.repository.ProductRepositoryDao
 import com.example.androidecommerceapp.view.auth.repository.UserRepository
+import com.example.androidecommerceapp.view.favorites.repository.FavoriteRepository
 import com.example.androidecommerceapp.view.service.ApiService
 import com.example.androidecommerceapp.view.service.FakeStoreApiService
 import com.example.androidecommerceapp.view.myCart.viewModel.MyCartViewModel
@@ -127,6 +129,18 @@ object AppModule {
     @Singleton
     fun provideUserRepository(userDao: UserDao): UserRepository {
         return UserRepository(userDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavoritesDao(database: AppDatabase): FavoriteDao {
+        return database.favoritesDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavoritesRepository(favoritesDao: FavoriteDao): FavoriteRepository {
+        return FavoriteRepository(favoritesDao)
     }
 
 

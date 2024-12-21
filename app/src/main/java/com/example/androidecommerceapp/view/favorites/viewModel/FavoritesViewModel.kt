@@ -4,35 +4,46 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.androidecommerceapp.database.ProductEntity
-import com.example.androidecommerceapp.view.productDetails.repository.ProductRepositoryDao
+import com.example.androidecommerceapp.database.FavoriteEntity
+import com.example.androidecommerceapp.utils.ResultState
+import com.example.androidecommerceapp.view.dataModel.Product
+import com.example.androidecommerceapp.view.favorites.repository.FavoriteRepository
+import com.example.androidecommerceapp.view.home.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel  @Inject constructor(
-    private val productRepositoryDao: ProductRepositoryDao
+    private val favoriteRepository: FavoriteRepository,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
 
-    // LiveData to store the list of favorite products
-    private val _favorites = MutableLiveData<List<ProductEntity>>()
-    val favorites: LiveData<List<ProductEntity>> get() = _favorites
+    // List of favorite product IDs
+    private val _favoriteEntityIds = MutableLiveData<List<FavoriteEntity>>()
+    val favoriteEntityIds: LiveData<List<FavoriteEntity>> = _favoriteEntityIds
 
-    // Fetch all favorite products from the database
-    fun getFavorites() {
+    // Function to add a product to the favorites
+    fun addProductToFavorites(productId: Int) {
+        // Use viewModelScope for coroutines tied to the ViewModel lifecycle
         viewModelScope.launch {
-            productRepositoryDao.getFavorites().collect {
-                _favorites.postValue(it) // Update LiveData
+            favoriteRepository.addProductToFavorites(productId)
+        }
+    }
+
+    // Fetch favorite product IDs
+    fun fetchFavoriteProductIds() {
+        viewModelScope.launch {
+            favoriteRepository.getFavoriteIds().collect { favoriteList ->
+                _favoriteEntityIds.value = favoriteList
             }
         }
     }
-    // Remove a product from the favorites
-    fun removeFromFavorites(product: ProductEntity) {
-        viewModelScope.launch {
-            productRepositoryDao.removeProductFromFavorites(product)
-            getFavorites() // Refresh the favorites list after removal
-        }
+
+    // Fetch product details by ID
+    suspend fun getProductById(productId: Int): Flow<ResultState<Product>> {
+        return productRepository.getProductById(productId)
     }
 
 }

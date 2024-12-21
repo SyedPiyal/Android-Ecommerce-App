@@ -5,6 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.androidecommerceapp.database.ProductEntity
+import com.example.androidecommerceapp.utils.ResultState
+import com.example.androidecommerceapp.view.dataModel.Product
+import com.example.androidecommerceapp.view.home.repository.ProductRepository
 import com.example.androidecommerceapp.view.productDetails.repository.ProductRepositoryDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -12,52 +15,23 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
-    private val productRepositoryDao: ProductRepositoryDao,
+    private val productRepository: ProductRepository
 ) : ViewModel() {
 
-    private val _favorites = MutableLiveData<List<ProductEntity>>()
-    val favorites: LiveData<List<ProductEntity>> get() = _favorites
+    // LiveData to expose product details to the UI
+    private val _productDetails = MutableLiveData<ResultState<Product>>()
+    val productDetails: LiveData<ResultState<Product>> = _productDetails
 
-    private val _isFavorite = MutableLiveData<Boolean>()
-    val isFavorite: LiveData<Boolean> get() = _isFavorite
-
-    fun addToFavorites(product: ProductEntity) {
+    // Function to fetch product details by id
+    fun getProductById(productId: Int) {
         viewModelScope.launch {
-            productRepositoryDao.addProductToFavorites(product)
-            _isFavorite.postValue(true)
-        }
-    }
-
-    fun checkIfFavorite(productId: Int) {
-        viewModelScope.launch {
-            val favoritesList = _favorites.value ?: emptyList()
-            _isFavorite.postValue(favoritesList.any { it.id == productId })
-        }
-    }
-
-
-    // Initialize the favorites list to check product favorite status
-    fun initializeFavorites() {
-        viewModelScope.launch {
-            productRepositoryDao.getFavorites().collect {
-                _favorites.postValue(it)
+            productRepository.getProductById(productId).collect { result ->
+                // Emit the result (success, loading, or error)
+                _productDetails.value = result
             }
         }
     }
 
-    fun removeFromFavorites(product: ProductEntity) {
-        viewModelScope.launch {
-            productRepositoryDao.removeProductFromFavorites(product)
-            _isFavorite.postValue(false)
 
-        }
-    }
 
-    fun getFavorites() {
-        viewModelScope.launch {
-            productRepositoryDao.getFavorites().collect {
-                _favorites.postValue(it)
-            }
-        }
-    }
 }

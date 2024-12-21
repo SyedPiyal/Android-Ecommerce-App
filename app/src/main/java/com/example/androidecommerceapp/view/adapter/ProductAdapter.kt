@@ -11,7 +11,7 @@ import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.view.dataModel.Product
 
 class ProductAdapter(private val products: MutableList<Product>,
-                     private val onItemClick: (Product) -> Unit) :
+                     private val onItemClick: (Int) -> Unit) :
     RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
     class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -42,7 +42,7 @@ class ProductAdapter(private val products: MutableList<Product>,
 
         // Set the click listener
         holder.itemView.setOnClickListener {
-            onItemClick(product)  // Trigger the navigation to ProductDetailsActivity
+            onItemClick(product.id)  // Trigger the navigation to ProductDetailsActivity
         }
     }
 
