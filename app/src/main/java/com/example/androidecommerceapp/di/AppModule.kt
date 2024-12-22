@@ -14,6 +14,7 @@ import com.example.androidecommerceapp.view.orderHistory.repository.OrderReposit
 import com.example.androidecommerceapp.view.productDetails.repository.ProductRepositoryDao
 import com.example.androidecommerceapp.view.auth.repository.UserRepository
 import com.example.androidecommerceapp.view.favorites.repository.FavoriteRepository
+import com.example.androidecommerceapp.view.home.repository.ProductRepository
 import com.example.androidecommerceapp.view.service.ApiService
 import com.example.androidecommerceapp.view.service.FakeStoreApiService
 import com.example.androidecommerceapp.view.myCart.viewModel.MyCartViewModel
@@ -141,6 +142,12 @@ object AppModule {
     @Singleton
     fun provideFavoritesRepository(favoritesDao: FavoriteDao): FavoriteRepository {
         return FavoriteRepository(favoritesDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHomeRepository(apiService: FakeStoreApiService): ProductRepository {
+        return ProductRepository(apiService)
     }
 
 

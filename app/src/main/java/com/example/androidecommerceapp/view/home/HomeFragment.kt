@@ -1,5 +1,8 @@
 package com.example.androidecommerceapp.view.home
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.databinding.FragmentHomeBinding
+import com.example.androidecommerceapp.utils.AlarmReceiver
 import com.example.androidecommerceapp.view.adapter.CategoryAdapter
 import com.example.androidecommerceapp.view.adapter.ProductAdapter
 import com.example.androidecommerceapp.view.productDetails.DetailsActivity
@@ -22,6 +26,7 @@ import com.example.androidecommerceapp.view.adapter.OfferAdapter
 import com.example.androidecommerceapp.view.dataModel.Offer
 import com.example.androidecommerceapp.view.home.viewModel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Calendar
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -37,10 +42,35 @@ class HomeFragment : Fragment() {
     private lateinit var offerAdapter: OfferAdapter
     private lateinit var recyclerView: RecyclerView
 
+    private lateinit var alarmManager: AlarmManager
+    private lateinit var alarmIntent: PendingIntent
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        // alarm manager code
+        alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        // Set the alarm to fire at 6 PM every day
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 18)
+            set(Calendar.MINUTE, 52)
+            set(Calendar.SECOND, 0)
+        }
+
+        val intent = Intent(requireContext(), AlarmReceiver::class.java)
+        alarmIntent = PendingIntent.getBroadcast(
+            requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            alarmIntent
+        )
 
 
         // Sample data

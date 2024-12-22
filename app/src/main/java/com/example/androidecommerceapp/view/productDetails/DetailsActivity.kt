@@ -1,7 +1,6 @@
 package com.example.androidecommerceapp.view.productDetails
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -12,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import android.content.Intent
+import android.view.View
 import android.view.WindowManager
 import androidx.lifecycle.Observer
 import androidx.work.OneTimeWorkRequestBuilder
@@ -19,24 +19,14 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.utils.OrderStatusUpdateWorker
-import com.example.androidecommerceapp.view.dataModel.Product
-import com.example.androidecommerceapp.database.CartEntity
-import com.example.androidecommerceapp.database.OrderEntity
-import com.example.androidecommerceapp.database.ProductEntity
 import com.example.androidecommerceapp.databinding.ActivityDetailsBinding
 import com.example.androidecommerceapp.utils.ResultState
-import com.example.androidecommerceapp.view.favorites.repository.FavoriteRepository
-import com.example.androidecommerceapp.view.favorites.viewModel.FavoritesViewModel
 import com.example.androidecommerceapp.view.myCart.viewModel.MyCartViewModel
 import com.example.androidecommerceapp.view.orderHistory.viewModel.OrderHistoryViewModel
 import com.example.androidecommerceapp.view.productDetails.viewModel.DetailsViewModel
 import com.example.androidecommerceapp.view.shareDetails.ShareActivity
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.migration.CustomInjection.inject
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -52,7 +42,7 @@ class DetailsActivity : AppCompatActivity() {
     private val detailsViewModel: DetailsViewModel by viewModels()
     private val cartViewModel: MyCartViewModel by viewModels()
     private val orderHistoryViewModel: OrderHistoryViewModel by viewModels()
-    private val favoriteViewModel: FavoritesViewModel by viewModels()
+//    private val favoriteViewModel: FavoritesViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,9 +62,7 @@ class DetailsActivity : AppCompatActivity() {
         imageView = binding.productImage
 
         // Retrieve the Product id
-        val productId = intent.getIntExtra("PRODUCT",-1)
-
-        Log.d("Id--->", productId.toString())
+        val productId = intent.getIntExtra("PRODUCT", -1)
 
         // Fetch product details using the ViewModel
         if (productId != -1) {
@@ -86,31 +74,95 @@ class DetailsActivity : AppCompatActivity() {
         detailsViewModel.productDetails.observe(this, Observer { result ->
             when (result) {
                 is ResultState.Loading -> {
-//                    showLoading(true)
+                    binding.progressBar.visibility = View.VISIBLE
                 }
+
                 is ResultState.Success -> {
                     // Display the product data
-//                    showLoading(false)
+
+                    binding.progressBar.visibility = View.GONE
+
                     var product = result.data
                     tv_title.text = product.title
-                    tv_price.text = product.price.toString()
+                    tv_price.text = "$${product.price}"
                     tv_description.text = product.description
                     Glide.with(this).load(product.image).into(imageView)
+
+                    // buy now button
+                    binding.btnBuyNow.setOnClickListener {
+                        // Insert the OrderEntity into the Room database using the OrderHistoryViewModel
+                        orderHistoryViewModel.addOrder(product)
+
+                        // Get the orderId for the scheduled WorkManager tasks
+                        val orderId = product.id
+
+                        // Schedule WorkManager tasks for order status updates after specific intervals
+                        scheduleOrderStatusUpdates(orderId)
+
+                        // Show a toast confirming the order was placed
+                        Toast.makeText(
+                            applicationContext,
+                            "Order placed successfully!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    // button add to cart
+                    binding.btnAddtoCart.setOnClickListener {
+                        cartViewModel.addToCart(product)
+
+                        Toast.makeText(
+                            applicationContext,
+                            "Product added to cart",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
+
                 is ResultState.Error -> {
-//                    showLoading(false)
-//                    showError(result.error)
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        applicationContext, "Error: ${result.exception.message}", Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
+        })
+
+
+        // Observe the favorite state
+        detailsViewModel.isFavorite.observe(this, Observer { isFavorite ->
+            // Change the button state based on whether the product is favorited
+            val favoriteIcon =
+                if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_border
+            binding.favoritesButton.setImageResource(favoriteIcon)
         })
 
         // add to favorites
         binding.favoritesButton.setOnClickListener {
             if (productId != -1) {
-                // Add to favorites
-                favoriteViewModel.addProductToFavorites(productId)
+                if (detailsViewModel.isFavorite.value == true) {
+                    // Product is already favorited, remove it from favorites
+                    detailsViewModel.removeProductFromFavorites(productId)
+                    Toast.makeText(applicationContext, "Removed from favorites", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    // Product is not favorited, add it to favorites
+                    detailsViewModel.addProductToFavorites(productId)
+                    Toast.makeText(applicationContext, "Added to favorites", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
             }
         }
+
+        // Share button click listener
+        binding.btnShare.setOnClickListener {
+            val intent = Intent(this, ShareActivity::class.java)
+            startActivity(intent)
+        }
+
+
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

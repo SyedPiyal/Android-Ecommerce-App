@@ -2,6 +2,7 @@ package com.example.androidecommerceapp.view.myCart.repository
 
 import com.example.androidecommerceapp.database.CartDao
 import com.example.androidecommerceapp.database.CartEntity
+import com.example.androidecommerceapp.view.dataModel.Product
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -15,7 +16,15 @@ class CartRepository @Inject constructor(
     }
 
     // Function to add an item to the cart
-    suspend fun addItemToCart(cartItem: CartEntity) {
+    suspend fun addItemToCart(cartItem: Product) {
+        val cartItem = CartEntity(
+            id = cartItem.id,
+            title = cartItem.title,
+            description = cartItem.description,
+            image = cartItem.image,
+            price = cartItem.price,
+            quantity = 1
+        )
         cartDao.insertCartItem(cartItem)  // Insert or update cart item based on the primary key
     }
 
@@ -28,4 +37,7 @@ class CartRepository @Inject constructor(
     suspend fun removeFromCart(cartItem: CartEntity) {
         cartDao.deleteCartItem(cartItem)  // Remove the cart item from the database
     }
+
+    /// others ---> convert
+
 }

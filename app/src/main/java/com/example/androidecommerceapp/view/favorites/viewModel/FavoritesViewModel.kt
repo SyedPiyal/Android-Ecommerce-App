@@ -1,5 +1,6 @@
 package com.example.androidecommerceapp.view.favorites.viewModel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,36 +15,57 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class FavoritesViewModel  @Inject constructor(
-    private val favoriteRepository: FavoriteRepository,
-    private val productRepository: ProductRepository
-) : ViewModel() {
-
-    // List of favorite product IDs
-    private val _favoriteEntityIds = MutableLiveData<List<FavoriteEntity>>()
-    val favoriteEntityIds: LiveData<List<FavoriteEntity>> = _favoriteEntityIds
-
-    // Function to add a product to the favorites
-    fun addProductToFavorites(productId: Int) {
-        // Use viewModelScope for coroutines tied to the ViewModel lifecycle
-        viewModelScope.launch {
-            favoriteRepository.addProductToFavorites(productId)
-        }
-    }
-
-    // Fetch favorite product IDs
-    fun fetchFavoriteProductIds() {
-        viewModelScope.launch {
-            favoriteRepository.getFavoriteIds().collect { favoriteList ->
-                _favoriteEntityIds.value = favoriteList
-            }
-        }
-    }
-
-    // Fetch product details by ID
-    suspend fun getProductById(productId: Int): Flow<ResultState<Product>> {
-        return productRepository.getProductById(productId)
-    }
-
-}
+//@HiltViewModel
+//class FavoritesViewModel  @Inject constructor(
+//    private val favoriteRepository: FavoriteRepository,
+//    private val productRepository: ProductRepository
+//) : ViewModel() {
+//
+//    private val _favoriteProducts = MutableLiveData<List<Product>>()
+//    val favoriteProducts: LiveData<List<Product>> = _favoriteProducts
+//
+//    private val _isFavorite = MutableLiveData<Boolean>()
+//    val isFavorite: LiveData<Boolean> get() = _isFavorite
+//
+//    // Fetch all favorite product IDs and then fetch product details for each ID
+//    fun loadFavorites() {
+//        viewModelScope.launch {
+//            favoriteRepository.getFavoriteIds().collect { favoriteEntities ->
+//                val products = mutableListOf<Product>()
+//                for (favorite in favoriteEntities) {
+//                    // Fetch product details for each favorite ID
+//                    productRepository.getProductById(favorite.productId).collect { result ->
+//                        when (result) {
+//                            is ResultState.Success -> products.add(result.data)
+//                            is ResultState.Error -> Log.e("Favorites", "Error fetching product")
+//                            else -> {}
+//                        }
+//                    }
+//                }
+//                _favoriteProducts.value = products
+//            }
+//        }
+//    }
+//    // Remove a product from favorites
+//    fun removeProductFromFavorites(productId: Int) {
+//        viewModelScope.launch {
+//            favoriteRepository.removeProductFromFavorites(productId)
+//            loadFavorites() // Reload the favorites after removal
+//        }
+//    }
+//
+//    fun checkIfFavorite(productId: Int) {
+//        viewModelScope.launch {
+//            val favoritesList = _favoriteProducts.value ?: emptyList()
+//            _isFavorite.postValue(favoritesList.any { it.id == productId })
+//        }
+//    }
+//
+//
+//    // Function to add a product to the favorites
+//    fun addProductToFavorites(productId: Int) {
+//        viewModelScope.launch {
+//            favoriteRepository.addProductToFavorites(productId)
+//        }
+//    }
+//}

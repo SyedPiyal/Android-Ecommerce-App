@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.androidecommerceapp.database.OrderEntity
+import com.example.androidecommerceapp.view.dataModel.Product
 import com.example.androidecommerceapp.view.orderHistory.repository.OrderRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,7 +19,7 @@ class OrderHistoryViewModel @Inject constructor(
     private val _orders = MutableLiveData<List<OrderEntity>>()
     val orders: LiveData<List<OrderEntity>> get() = _orders
 
-    fun addOrder(order: OrderEntity) {
+    fun addOrder(order: Product) {
         viewModelScope.launch {
             orderRepository.addOrder(order)
         }

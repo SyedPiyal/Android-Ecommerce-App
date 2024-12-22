@@ -87,30 +87,30 @@ class MyCartFragment : Fragment() {
 
         cartViewModel.getCartItems()
 
-        binding.btnBuyNow.setOnClickListener {
-            val orderItem = OrderEntity(
-                title = "Shoe",
-                description = "description",
-                image = "image",
-                price = totalPriceDat,
-                status = "Processing",
-                id = 100,
-                quantity = totalQuantityDat, // You can adjust this to handle quantity input if needed
-                orderDate = System.currentTimeMillis() // Timestamp for when the order was placed
-            )
-            // Add product to orders
-            orderHistoryViewModel.addOrder(orderItem)
-
-            // Get the orderId for the scheduled WorkManager tasks
-            val orderId = orderItem.id
-
-            // Schedule WorkManager tasks for order status updates after specific intervals
-            scheduleOrderStatusUpdates(orderId)
-
-
-            Toast.makeText(requireContext(), "Product added to orders", Toast.LENGTH_SHORT).show()
-
-        }
+//        binding.btnBuyNow.setOnClickListener {
+//            val orderItem = OrderEntity(
+//                title = "Shoe",
+//                description = "description",
+//                image = "image",
+//                price = totalPriceDat,
+//                status = "Processing",
+//                id = 100,
+//                quantity = totalQuantityDat, // You can adjust this to handle quantity input if needed
+//                orderDate = System.currentTimeMillis() // Timestamp for when the order was placed
+//            )
+////             Add product to orders
+//            orderHistoryViewModel.addOrder(orderItem)
+//
+////             Get the orderId for the scheduled WorkManager tasks
+//            val orderId = orderItem.id
+//
+////             Schedule WorkManager tasks for order status updates after specific intervals
+//            scheduleOrderStatusUpdates(orderId)
+//
+//
+//            Toast.makeText(requireActivity(), "Product added to orders", Toast.LENGTH_SHORT).show()
+//
+//        }
 
         return root
     }

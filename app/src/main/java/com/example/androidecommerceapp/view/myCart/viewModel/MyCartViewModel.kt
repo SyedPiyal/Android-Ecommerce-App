@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.androidecommerceapp.database.CartEntity
+import com.example.androidecommerceapp.view.dataModel.Product
 import com.example.androidecommerceapp.view.myCart.repository.CartRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -24,7 +25,8 @@ class MyCartViewModel @Inject constructor(
     private val _totalQuantity = MutableLiveData<Int>()
     val totalQuantity: LiveData<Int> get() = _totalQuantity
 
-    fun addToCart(cartItem: CartEntity) {
+
+    fun addToCart(cartItem: Product) {
         viewModelScope.launch {
             cartRepository.addItemToCart(cartItem)
             getCartItems()
@@ -64,6 +66,9 @@ class MyCartViewModel @Inject constructor(
         val total = cartItems.sumOf { it.getTotalQuantity() }
         _totalQuantity.postValue(total)
     }
+
+
+    // convert return
 
 
 }
