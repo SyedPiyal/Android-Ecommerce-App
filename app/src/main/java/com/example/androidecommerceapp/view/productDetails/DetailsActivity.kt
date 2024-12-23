@@ -125,9 +125,10 @@ class DetailsActivity : AppCompatActivity() {
                         applicationContext, "Error: ${result.exception.message}", Toast.LENGTH_SHORT
                     ).show()
                 }
+
+                else -> {}
             }
         })
-
 
         // Observe the favorite state
         detailsViewModel.isFavorite.observe(this, Observer { isFavorite ->
@@ -160,17 +161,12 @@ class DetailsActivity : AppCompatActivity() {
             val intent = Intent(this, ShareActivity::class.java)
             startActivity(intent)
         }
-
-
-
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
     }
-
 
     // Schedule WorkManager tasks to update order status and send notifications
     private fun scheduleOrderStatusUpdates(orderId: Int) {
@@ -194,15 +190,19 @@ class DetailsActivity : AppCompatActivity() {
             .build()
 
         // Enqueue WorkManager tasks
-        WorkManager.getInstance(applicationContext).enqueue(workRequestShipped)
-        WorkManager.getInstance(applicationContext).enqueue(workRequestDelivering)
-        WorkManager.getInstance(applicationContext).enqueue(workRequestDelivered)
-    }
+//        WorkManager.getInstance(applicationContext).enqueue(workRequestShipped)
+//        WorkManager.getInstance(applicationContext).enqueue(workRequestDelivering)
+//        WorkManager.getInstance(applicationContext).enqueue(workRequestDelivered)
 
+        // Chain the WorkRequests so they run one after another
+        WorkManager.getInstance(applicationContext)
+            .beginWith(workRequestShipped) // Start with 'Shipped'
+            .then(workRequestDelivering)   // Then run 'Delivering'
+            .then(workRequestDelivered)    // Finally run 'Delivered'
+            .enqueue() // Enqueue the entire chain
+    }
 
     override fun onResume() {
         super.onResume()
-
     }
-
 }

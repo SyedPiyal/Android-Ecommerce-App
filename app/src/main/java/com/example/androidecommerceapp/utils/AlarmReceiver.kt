@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 
 class AlarmReceiver : BroadcastReceiver() {
 
+
     @SuppressLint("ServiceCast")
     override fun onReceive(context: Context, intent: Intent) {
         val connectivityManager =

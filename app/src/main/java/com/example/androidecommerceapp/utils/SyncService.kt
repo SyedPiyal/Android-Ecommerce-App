@@ -48,26 +48,30 @@ class SyncService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
 //            try {
 //                val products = homeRepository.getProducts()
-//                // Process the products or update UI if needed
+//
 //            } catch (e: Exception) {
 //                e.printStackTrace()
 //            }
 
-            // Collect the flow from repository
+            // Collect the flow from repository and show notification according to that
             productRepository.getProducts().collect { result ->
                 when (result) {
                     is ResultState.Loading -> {
                         showSyncNotification("Syncing data...")
                     }
+
                     is ResultState.Success -> {
                         showSyncNotification("Data synced successfully!")
                     }
+
                     is ResultState.Error -> {
                         showSyncNotification("Sync failed: ${result.exception.message}")
                     }
                 }
             }
 
+            // stop the service after work
+            // also stop notification
             stopSelf()
         }
 

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.androidecommerceapp.R
 import com.example.androidecommerceapp.databinding.FragmentHomeBinding
+import com.example.androidecommerceapp.utils.AlarmManagerHelper
 import com.example.androidecommerceapp.utils.AlarmReceiver
 import com.example.androidecommerceapp.view.adapter.CategoryAdapter
 import com.example.androidecommerceapp.view.adapter.ProductAdapter
@@ -44,6 +45,8 @@ class HomeFragment : Fragment() {
 
     private lateinit var alarmManager: AlarmManager
     private lateinit var alarmIntent: PendingIntent
+    private lateinit var alarmManagerHelper: AlarmManagerHelper
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -51,26 +54,11 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         // alarm manager code
-        alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManagerHelper = AlarmManagerHelper(requireContext())
 
         // Set the alarm to fire at 6 PM every day
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 18)
-            set(Calendar.MINUTE, 52)
-            set(Calendar.SECOND, 0)
-        }
-
-        val intent = Intent(requireContext(), AlarmReceiver::class.java)
-        alarmIntent = PendingIntent.getBroadcast(
-            requireContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        alarmManager.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
-            alarmIntent
-        )
+        val alarmTimeInMillis = alarmManagerHelper.getAlarmTimeInMillis()
+        alarmManagerHelper.setDailyAlarm(alarmTimeInMillis)
 
 
         // Sample data
@@ -89,9 +77,8 @@ class HomeFragment : Fragment() {
 
         // Initialize CategoryAdapter with an item click listener
         categoryAdapter = CategoryAdapter(emptyList()) { category ->
-            // Navigate to ProductListActivity with the selected category
             val intent = Intent(requireContext(), ProductListActivity::class.java).apply {
-                putExtra("CATEGORY", category) // Pass the selected category
+                putExtra("CATEGORY", category)
             }
             startActivity(intent)
         }
@@ -141,18 +128,15 @@ class HomeFragment : Fragment() {
         homeViewModel.products.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is ResultState.Loading -> {
-                    // Show loading indicator (you can add a progress bar)
                     binding.progressBar.visibility = View.VISIBLE
                 }
 
                 is ResultState.Success -> {
-                    // Hide loading and update the adapter
                     binding.progressBar.visibility = View.GONE
                     productAdapter.setData(result.data)
                 }
 
                 is ResultState.Error -> {
-                    // Handle error (e.g., show a toast or snackbar)
                     binding.progressBar.visibility = View.GONE
                     Toast.makeText(
                         context, "Error: ${result.exception.message}", Toast.LENGTH_SHORT
@@ -162,8 +146,6 @@ class HomeFragment : Fragment() {
         }
         // Trigger API call
         homeViewModel.getProducts()
-
-
 
         return binding.root
     }
